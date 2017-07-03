@@ -5,6 +5,8 @@ package com.kirich74.questsapp.mainscreen;
  */
 
 
+import com.kirich74.questsapp.R;
+
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,9 +14,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class ChooseFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    final int PAGE_COUNT = 3;
-
-    private String tabTitles[] = new String[]{"Tab1", "Tab2", "Tab3"};
+    final int PAGE_COUNT = 2;
 
     private Context context;
 
@@ -30,8 +30,6 @@ public class ChooseFragmentPagerAdapter extends FragmentPagerAdapter {
                 return RecentlyPlayedFragment.newInstance(0);
             case 1:
                 return RecentlyCreatedFragment.newInstance(1);
-            case 2:
-                return RecentlyCreatedFragment.newInstance(2);
             default:
                 return null;
         }
@@ -44,6 +42,13 @@ public class ChooseFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return tabTitles[position];
+        switch (position) {
+            case 0:
+                return "Recent played";
+            case 1:
+                return "Recent created";
+            default:
+                return null;
+        }
     }
 }

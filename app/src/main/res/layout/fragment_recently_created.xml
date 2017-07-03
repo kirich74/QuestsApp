@@ -4,8 +4,17 @@
     android:layout_height="match_parent"
     tools:context=".mainscreen.MainActivity">
 
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    </android.support.v7.widget.RecyclerView>
+
+    <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Created" />
+        android:layout_gravity="bottom|end"
+        android:layout_margin="24dp"
+        android:src="@drawable/ic_add_white_24dp" />
 </FrameLayout>
