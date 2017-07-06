@@ -3,4 +3,5 @@
     <string name="recent">recent</string>
     <string name="played">played</string>
     <string name="created">created</string>
+    <string name="answer">Answer:</string>
 </resources>

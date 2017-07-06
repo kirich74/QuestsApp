@@ -1,4 +1,4 @@
-package com.kirich74.questsapp.ui;
+package com.kirich74.questsapp.createquest;
 
 import com.kirich74.questsapp.R;
 
