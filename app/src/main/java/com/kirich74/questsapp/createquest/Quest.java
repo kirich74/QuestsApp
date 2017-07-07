@@ -11,10 +11,11 @@ import org.json.JSONObject;
 public class Quest {
 
     private JSONArray quest;
+    private String name;
 
     public void createNewQuest(String name){
         quest = new JSONArray();
-        quest.put(name);
+        this.name = name;
     }
 
     public void addItem (JSONObject item){
@@ -28,5 +29,9 @@ public class Quest {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public int size () {
+        return quest.length();
     }
 }

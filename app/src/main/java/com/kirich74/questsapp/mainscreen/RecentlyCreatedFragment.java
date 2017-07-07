@@ -1,7 +1,7 @@
 package com.kirich74.questsapp.mainscreen;
 
 import com.kirich74.questsapp.R;
-import com.kirich74.questsapp.ui.CreateQuestActivity;
+import com.kirich74.questsapp.createquest.CreateQuestActivity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
