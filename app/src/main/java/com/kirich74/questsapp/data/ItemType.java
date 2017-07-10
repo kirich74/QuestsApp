@@ -9,6 +9,7 @@ public class ItemType {
     public static final int TEXT = 0;
     public static final int TEXT_ANSWER = 1;
     public static final int IMAGE_URI = 2;
+    public static final int ADD_BUTTONS = 10;
 
     public static final String TYPE = "type";
     public static final String TEXT_ = "text";

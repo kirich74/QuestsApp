@@ -43,7 +43,7 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment {
         mFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                CreateQuestActivity.start(getContext());
+                CreateQuestActivity.start(getContext(), null);
             }
         });
         return view;
