@@ -18,21 +18,19 @@ import static com.kirich74.questsapp.data.ItemType.TYPE;
 
 public class Quest {
 
-    private JSONArray quest;
     private String name;
-    private ArrayList<JSONObject> questList;
+    private ArrayList<JSONObject> quest;
 
     public Quest(){
-        quest = new JSONArray();
-        questList = new ArrayList<>();
+        quest = new ArrayList<>();
     }
 
     public Quest(final String questInString) {
         try {
-            quest = new JSONArray(questInString);
-            questList = new ArrayList<>();
-            for (int i = 0; i < quest.length(); i++){
-                questList.add(quest.getJSONObject(i));
+            JSONArray questJsonArray = new JSONArray(questInString);
+            quest = new ArrayList<>();
+            for (int i = 0; i < questJsonArray.length(); i++){
+                quest.add(questJsonArray.getJSONObject(i));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -47,13 +45,13 @@ public class Quest {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        questList.add(object);
+        quest.add(object);
     }
 
     public void editTextItem (int position, String text){
-        questList.get(position).remove(TEXT_);
+        quest.get(position).remove(TEXT_);
         try {
-            questList.get(position).put(TEXT_, text);
+            quest.get(position).put(TEXT_, text);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -67,23 +65,27 @@ public class Quest {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        questList.add(object);
+        quest.add(object);
     }
 
     public void editTextAnswerItem (int position, String text){
-        questList.get(position).remove(TEXT_ANSWER_);
+        quest.get(position).remove(TEXT_ANSWER_);
         try {
-            questList.get(position).put(TEXT_ANSWER_, text);
+            quest.get(position).put(TEXT_ANSWER_, text);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     public JSONObject getItem(int i){
-        return questList.get(i);
+        return quest.get(i);
     }
 
     public int size () {
-        return questList.size();
+        return quest.size();
+    }
+
+    public String getQuestJsonArrayString (){
+        return new JSONArray(quest).toString();
     }
 }
