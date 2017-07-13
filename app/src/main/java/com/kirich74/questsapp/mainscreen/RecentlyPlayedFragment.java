@@ -11,7 +11,7 @@ import android.view.ViewGroup;
  * Created by Kirill Pilipenko on 03.07.2017.
  */
 
-public class RecentlyPlayedFragment extends android.support.v4.app.Fragment {
+public class RecentlyPlayedFragment extends android.support.v4.app.Fragment implements onQuestActionListener {
 
     public static final String TAG = "RecentlyPlayedFragment";
     private int mPage;
@@ -38,5 +38,19 @@ public class RecentlyPlayedFragment extends android.support.v4.app.Fragment {
     }
 
 
+    @Override
+    public void startOrEdit(final int id) {
+
+    }
+
+    @Override
+    public String getButtonTitle() {
+        return null;
+    }
+
+    @Override
+    public void deleteQuest(final int id) {
+
+    }
 }
 

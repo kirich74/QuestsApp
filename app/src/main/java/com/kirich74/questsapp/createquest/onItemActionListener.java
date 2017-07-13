@@ -8,6 +8,6 @@ import org.json.JSONObject;
 
 public interface onItemActionListener {
 
-    void saveItemToJsonArray (int position, JSONObject object);
+    void save ();
 
 }

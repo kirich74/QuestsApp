@@ -6,6 +6,7 @@
     android:layout_marginEnd="16dp"
     android:layout_marginTop="16dp">
     <ImageView
+        android:id="@+id/image_description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -36,11 +37,10 @@
         android:orientation="horizontal"
         android:padding="8dp">
 
-        <TextView
-            android:id="@+id/quest_start_button"
+        <Button
+            android:id="@+id/quest_start_or_edit_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="START"
             />
 
     </LinearLayout>
