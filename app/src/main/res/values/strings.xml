@@ -4,4 +4,5 @@
     <string name="played">played</string>
     <string name="created">created</string>
     <string name="answer">Answer:</string>
+    <string name="choose_photo">CHOOSE PHOTO</string>
 </resources>

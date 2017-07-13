@@ -4,11 +4,11 @@
     android:layout_height="match_parent"
     tools:context=".mainscreen.MainActivity">
 
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/recently_created_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </ListView>
+    </android.support.v7.widget.RecyclerView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/create_new_quest_fab"

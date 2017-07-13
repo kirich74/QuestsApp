@@ -40,6 +40,8 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
 
     QuestsRecyclerViewAdapter mCursorAdapter;
 
+    private RecyclerView questsRecyclerView;
+
     public static RecentlyCreatedFragment newInstance(int page) {
         RecentlyCreatedFragment fragment = new RecentlyCreatedFragment();
 
@@ -69,9 +71,9 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
             }
         });
 
-        ListView questsRecyclerView = (ListView) view.findViewById(R.id.recently_created_recycler_view);
-        mCursorAdapter = new QuestsRecyclerViewAdapter(getContext(), null);
-        mCursorAdapter.setOnQuestActionListener(this);
+        questsRecyclerView = (RecyclerView) view.findViewById(R.id.recently_created_recycler_view);
+        questsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mCursorAdapter = new QuestsRecyclerViewAdapter(this, null);
         questsRecyclerView.setAdapter(mCursorAdapter);
 
         getLoaderManager().initLoader(QUEST_LOADER, null, this);
@@ -116,12 +118,14 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
 
     @Override
     public void onLoadFinished(final Loader<Cursor> loader, final Cursor data) {
-        mCursorAdapter.swapCursor(data);
+        mCursorAdapter.setCursor(data);
+        mCursorAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onLoaderReset(final Loader<Cursor> loader) {
-        mCursorAdapter.swapCursor(null);
+        mCursorAdapter.setCursor(null);
+        mCursorAdapter.notifyDataSetChanged();
     }
 }
 
