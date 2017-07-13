@@ -7,7 +7,9 @@ import android.net.Uri;
 
 public interface CreateQuestView extends MvpView {
 
-    void showQuestRecyclerView (Quest quest);
 
     void onSaveQuest(ContentValues values, Uri currentQuestUri);
+
+    void showQuestRecyclerView(String name, String description, String image, int access,
+            Quest quest);
 }

@@ -9,18 +9,18 @@
         android:paddingRight="16dp">
 
         <ImageView
-            android:id="@+id/image_description"
+            android:id="@+id/image_description_create"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <Button
-            android:id="@+id/choose_photo"
+            android:id="@+id/choose_photo_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/choose_photo" />
 
         <EditText
-            android:id="@+id/quest_title_text_view"
+            android:id="@+id/quest_title_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"

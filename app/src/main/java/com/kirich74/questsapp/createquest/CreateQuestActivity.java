@@ -50,11 +50,7 @@ public class CreateQuestActivity extends MvpActivity
 
 
 
-    @Override
-    public void showQuestRecyclerView(final Quest quest) {
-        mAdapter.setQuest(quest);
-        mAdapter.notifyDataSetChanged();
-    }
+
 
     @Override
     public void onSaveQuest(final ContentValues values, final Uri currentQuestUri) {
@@ -88,6 +84,13 @@ public class CreateQuestActivity extends MvpActivity
             }
         }
         finish();
+    }
+
+    @Override
+    public void showQuestRecyclerView(final String name, final String description,
+            final String image, final int access,
+            final Quest quest) {
+        mAdapter.setQuest(name, description, image, access, quest);
     }
 
     @Override

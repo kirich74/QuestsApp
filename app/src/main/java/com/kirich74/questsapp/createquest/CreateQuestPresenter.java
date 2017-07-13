@@ -11,6 +11,8 @@ import android.widget.Toast;
 import com.kirich74.questsapp.R;
 import com.kirich74.questsapp.data.QuestContract.QuestEntry;
 
+import static com.kirich74.questsapp.data.ItemType.*;
+
 
 @InjectViewState
 public class CreateQuestPresenter extends MvpPresenter<CreateQuestView> {
@@ -33,12 +35,12 @@ public class CreateQuestPresenter extends MvpPresenter<CreateQuestView> {
         this.description = description;
         this.image = Uri.parse(image);
         this.access = access;
-        getViewState().showQuestRecyclerView(mQuest);
+        getViewState().showQuestRecyclerView(name, description, image, access, mQuest);
     }
 
     public void CreateEmptyQuest (){
         mQuest = new Quest();
-        getViewState().showQuestRecyclerView(mQuest);
+        getViewState().showQuestRecyclerView("", "", "", 0, mQuest);
     }
 
 

@@ -12,17 +12,12 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
-import static com.kirich74.questsapp.data.ItemType.ADD_BUTTONS;
-import static com.kirich74.questsapp.data.ItemType.TEXT;
-import static com.kirich74.questsapp.data.ItemType.TEXT_;
-import static com.kirich74.questsapp.data.ItemType.TEXT_ANSWER;
-import static com.kirich74.questsapp.data.ItemType.TEXT_ANSWER_;
-import static com.kirich74.questsapp.data.ItemType.TYPE;
-import static com.kirich74.questsapp.data.ItemType.UNKNOWN_TYPE;
-import static java.lang.Double.parseDouble;
+import static com.kirich74.questsapp.data.ItemType.*;
 
 /**
  * Created by Kirill Pilipenko on 06.07.2017.
@@ -33,13 +28,26 @@ public class ItemsRecyclerViewAdapter
 
     private Quest mQuest;
 
+    private String mName;
+
+    private String mDescription;
+
+    private String mMainImageUri;
+
+    private int mAccess;
+
     public ItemsRecyclerViewAdapter(
             final CreateQuestActivity createQuestActivity) {
 
     }
 
-    public void setQuest(Quest quest) {
+    public void setQuest(String name, String description, String mainImageUri, int access,
+            Quest quest) {
         mQuest = quest;
+        mMainImageUri = mainImageUri;
+        mName = name;
+        mDescription = description;
+        mAccess = access;
     }
 
     @Override
@@ -59,6 +67,10 @@ public class ItemsRecyclerViewAdapter
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_create_add_buttons, viewGroup, false);
                 return new addButtonsViewHolder(view);
+            case MAIN_INFO:
+                view = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.item_create_main_info, viewGroup, false);
+                return new mainInfoViewHolder(view);
             default:
                 return null;
         }
@@ -80,13 +92,21 @@ public class ItemsRecyclerViewAdapter
             case ADD_BUTTONS:
                 addButtonsViewHolder addButtonsViewHolder = (addButtonsViewHolder) holder;
                 addButtonsViewHolder.bind();
+                break;
+            case MAIN_INFO:
+                mainInfoViewHolder mainInfoViewHolder = (mainInfoViewHolder) holder;
+                mainInfoViewHolder.bind(mName, mDescription);
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == getItemCount() - 1)
+        if (position == 0) {
+            return MAIN_INFO;
+        }
+        if (position == getItemCount() - 1) {
             return ADD_BUTTONS;
+        }
         try {
             return mQuest.getItem(position).getInt(TYPE);
         } catch (JSONException e) {
@@ -98,13 +118,15 @@ public class ItemsRecyclerViewAdapter
 
     @Override
     public int getItemCount() {
-        return mQuest == null ? 1
-        : mQuest.size() + 1;
+        //We always show first and last items (with main info and with add buttons)
+        return mQuest == null ? 2
+                : mQuest.size() + 2;
     }
 
     public class addButtonsViewHolder extends RecyclerView.ViewHolder {
 
         private ImageButton mAddText;
+
         private ImageButton mAddTextAnswer;
 
         addButtonsViewHolder(final View itemView) {
@@ -131,10 +153,33 @@ public class ItemsRecyclerViewAdapter
         }
     }
 
+    public class mainInfoViewHolder extends RecyclerView.ViewHolder {
+
+        private ImageView mImageDescription;
+
+        private Button mChoosePhotoButton;
+
+        private EditText mTitle, mDescription;
+
+        mainInfoViewHolder(final View itemView) {
+            super(itemView);
+            mImageDescription = (ImageView) itemView.findViewById(R.id.image_description_create);
+            mChoosePhotoButton = (Button) itemView.findViewById(R.id.choose_photo_button);
+            mTitle = (EditText) itemView.findViewById(R.id.quest_title_edit_text);
+            mDescription = (EditText) itemView.findViewById(R.id.quest_description_edit_text);
+        }
+
+        public void bind(String name, String description) {
+            mTitle.setText(name);
+            mDescription.setText(description);
+        }
+    }
+
     public class textViewHolder extends RecyclerView.ViewHolder {
 
-        private EditText mEditText;
         public TextListener mTextListener;
+
+        private EditText mEditText;
 
         textViewHolder(final View itemView, TextListener textListener) {
             super(itemView);
@@ -154,8 +199,9 @@ public class ItemsRecyclerViewAdapter
 
     public class textAnswerViewHolder extends RecyclerView.ViewHolder {
 
-        private EditText mEditText;
         public TextAnswerListener mTextAnswerListener;
+
+        private EditText mEditText;
 
         textAnswerViewHolder(final View itemView, TextAnswerListener textAnswerListener) {
             super(itemView);
@@ -195,6 +241,7 @@ public class ItemsRecyclerViewAdapter
 
         }
     }
+
     private class TextAnswerListener implements TextWatcher {
 
         private int position;

@@ -19,9 +19,10 @@ import static com.kirich74.questsapp.data.ItemType.TYPE;
 public class Quest {
 
     private String name;
+
     private ArrayList<JSONObject> quest;
 
-    public Quest(){
+    public Quest() {
         quest = new ArrayList<>();
     }
 
@@ -29,7 +30,7 @@ public class Quest {
         try {
             JSONArray questJsonArray = new JSONArray(questInString);
             quest = new ArrayList<>();
-            for (int i = 0; i < questJsonArray.length(); i++){
+            for (int i = 0; i < questJsonArray.length(); i++) {
                 quest.add(questJsonArray.getJSONObject(i));
             }
         } catch (JSONException e) {
@@ -37,7 +38,7 @@ public class Quest {
         }
     }
 
-    public void addTextItem (String text){
+    public void addTextItem(String text) {
         JSONObject object = new JSONObject();
         try {
             object.put(TYPE, TEXT);
@@ -48,16 +49,16 @@ public class Quest {
         quest.add(object);
     }
 
-    public void editTextItem (int position, String text){
-        quest.get(position).remove(TEXT_);
+    public void editTextItem(int position, String text) {
+        quest.get(realPosition(position)).remove(TEXT_);
         try {
-            quest.get(position).put(TEXT_, text);
+            quest.get(realPosition(position)).put(TEXT_, text);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void addTextAnswerItem (String text){
+    public void addTextAnswerItem(String text) {
         JSONObject object = new JSONObject();
         try {
             object.put(TYPE, TEXT_ANSWER);
@@ -68,24 +69,28 @@ public class Quest {
         quest.add(object);
     }
 
-    public void editTextAnswerItem (int position, String text){
-        quest.get(position).remove(TEXT_ANSWER_);
+    public void editTextAnswerItem(int position, String text) {
+        quest.get(realPosition(position)).remove(TEXT_ANSWER_);
         try {
-            quest.get(position).put(TEXT_ANSWER_, text);
+            quest.get(realPosition(position)).put(TEXT_ANSWER_, text);
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public JSONObject getItem(int i){
-        return quest.get(i);
+    public JSONObject getItem(int i) {
+        return quest.get(realPosition(i));
     }
 
-    public int size () {
+    public int size() {
         return quest.size();
     }
 
-    public String getQuestJsonArrayString (){
+    public String getQuestJsonArrayString() {
         return new JSONArray(quest).toString();
+    }
+
+    private int realPosition(int position) {
+        return position - 1;
     }
 }
