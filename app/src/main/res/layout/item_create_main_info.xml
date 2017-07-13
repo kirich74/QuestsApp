@@ -1,35 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/MyCardViewStyle">
+<android.support.v7.widget.CardView style="@style/MyCardViewStyle">
 
-    <ImageView
-        android:id="@+id/image_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/choose_photo"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/choose_photo"/>
-
-    <EditText
-        android:id="@+id/quest_title_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="24dp"
-        android:text="Sample Quest"
-        android:textColor="#333"
-        android:textSize="24sp" />
+        android:paddingRight="16dp">
 
-    <EditText
-        android:id="@+id/quest_description_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:paddingBottom="24dp"
-        android:text="here is some description of quest" />
+        <ImageView
+            android:id="@+id/image_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/choose_photo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_photo" />
+
+        <EditText
+            android:id="@+id/quest_title_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="24dp"
+            android:text="Sample Quest"
+            android:textColor="#333"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/quest_description_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:paddingBottom="24dp"
+            android:text="here is some description of quest" />
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>
