@@ -10,6 +10,5 @@ public interface CreateQuestView extends MvpView {
 
     void onSaveQuest(ContentValues values, Uri currentQuestUri);
 
-    void showQuestRecyclerView(String name, String description, String image, int access,
-            Quest quest);
+    void showQuestRecyclerView(Quest quest);
 }

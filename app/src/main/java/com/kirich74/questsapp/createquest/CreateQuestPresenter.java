@@ -18,29 +18,21 @@ import static com.kirich74.questsapp.data.ItemType.*;
 public class CreateQuestPresenter extends MvpPresenter<CreateQuestView> {
 
     private Quest mQuest;
-    private String name;
-    private String description;
-    private Uri image;
-    private int access;
     private Uri mCurrentQuestUri;
 
     public void setQuest(Uri questUri, String name, String description, String image, String dataJson, int access) {
         if (dataJson == null) {
             mQuest = new Quest();
         } else {
-            mQuest = new Quest(dataJson);
+            mQuest = new Quest(name, description, image, access, dataJson);
         }
         mCurrentQuestUri = questUri;
-        this.name = name;
-        this.description = description;
-        this.image = Uri.parse(image);
-        this.access = access;
-        getViewState().showQuestRecyclerView(name, description, image, access, mQuest);
+        getViewState().showQuestRecyclerView(mQuest);
     }
 
     public void CreateEmptyQuest (){
         mQuest = new Quest();
-        getViewState().showQuestRecyclerView("", "", "", 0, mQuest);
+        getViewState().showQuestRecyclerView(mQuest);
     }
 
 
@@ -50,7 +42,7 @@ public class CreateQuestPresenter extends MvpPresenter<CreateQuestView> {
         // Check if this is supposed to be a new quest
         // and check if all the fields in the editor are blank
         if (mCurrentQuestUri == null &&
-                TextUtils.isEmpty(name) && TextUtils.isEmpty(description) &&
+                TextUtils.isEmpty(mQuest.mName) && TextUtils.isEmpty(mQuest.mDescription) &&
                 TextUtils.isEmpty(questData)) {
             // Since no fields were modified, we can return early without creating a new quest.
             // No need to create ContentValues and no need to do any ContentProvider operations.
@@ -60,12 +52,12 @@ public class CreateQuestPresenter extends MvpPresenter<CreateQuestView> {
         // Create a ContentValues object where column names are the keys,
         // and quest attributes from the editor are the values.
         ContentValues values = new ContentValues();
-        values.put(QuestEntry.COLUMN_QUEST_NAME, "test");  //TODO make normal view
-        values.put(QuestEntry.COLUMN_QUEST_DESCRIPTION, description);
-        values.put(QuestEntry.COLUMN_QUEST_AUTHOR, "kirich74");
-        values.put(QuestEntry.COLUMN_QUEST_ACCESS, 0);
+        values.put(QuestEntry.COLUMN_QUEST_NAME, mQuest.mName);
+        values.put(QuestEntry.COLUMN_QUEST_DESCRIPTION, mQuest.mDescription);
+        values.put(QuestEntry.COLUMN_QUEST_AUTHOR, "kirich74");//TODO make normal view
+        values.put(QuestEntry.COLUMN_QUEST_ACCESS, mQuest.mAccess);
         values.put(QuestEntry.COLUMN_QUEST_DATA_JSON, questData);
-        values.put(QuestEntry.COLUMN_QUEST_IMAGE, "test");
+        values.put(QuestEntry.COLUMN_QUEST_IMAGE, mQuest.mMainImageUri);
 
         getViewState().onSaveQuest(values, mCurrentQuestUri);
     }

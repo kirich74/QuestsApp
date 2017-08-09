@@ -8,7 +8,6 @@ import com.kirich74.questsapp.data.QuestContract.QuestEntry;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -49,9 +48,6 @@ public class CreateQuestActivity extends MvpActivity
     }
 
 
-
-
-
     @Override
     public void onSaveQuest(final ContentValues values, final Uri currentQuestUri) {
         if (currentQuestUri == null) {
@@ -87,10 +83,10 @@ public class CreateQuestActivity extends MvpActivity
     }
 
     @Override
-    public void showQuestRecyclerView(final String name, final String description,
-            final String image, final int access,
+    public void showQuestRecyclerView(
             final Quest quest) {
-        mAdapter.setQuest(name, description, image, access, quest);
+        mAdapter.setQuest(quest);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -154,9 +150,7 @@ public class CreateQuestActivity extends MvpActivity
             mCurrentQuestUri = intent.getData();
             if (mCurrentQuestUri != null) {
                 getLoaderManager().initLoader(EXISTING_QUEST_LOADER, null, this);
-            }
-            else
-            {
+            } else {
                 mCreateQuestPresenter.CreateEmptyQuest();
             }
         }
@@ -166,7 +160,7 @@ public class CreateQuestActivity extends MvpActivity
         mLinearLayoutManager = new LinearLayoutManager(this);
         mAdapter = new ItemsRecyclerViewAdapter(this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
+
 
         Button button = (Button) findViewById(R.id.save);
         button.setOnClickListener(new View.OnClickListener() {

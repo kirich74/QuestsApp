@@ -18,16 +18,31 @@ import static com.kirich74.questsapp.data.ItemType.TYPE;
 
 public class Quest {
 
-    private String name;
+    public ArrayList<JSONObject> quest;
 
-    private ArrayList<JSONObject> quest;
+    public String mName;
+
+    public String mDescription;
+
+    public String mMainImageUri;
+
+    public int mAccess;
 
     public Quest() {
         quest = new ArrayList<>();
+        mName = "";
+        mDescription = "";
+        mMainImageUri = "";
+        mAccess = 0;
     }
 
-    public Quest(final String questInString) {
+    public Quest(final String name, final String description, final String mainImageUri,
+            final int access, final String questInString) {
         try {
+            mName = name;
+            mDescription = description;
+            mMainImageUri = mainImageUri;
+            mAccess = access;
             JSONArray questJsonArray = new JSONArray(questInString);
             quest = new ArrayList<>();
             for (int i = 0; i < questJsonArray.length(); i++) {
@@ -38,11 +53,11 @@ public class Quest {
         }
     }
 
-    public void addTextItem(String text) {
+    public void addTextItem() {
         JSONObject object = new JSONObject();
         try {
             object.put(TYPE, TEXT);
-            object.put(TEXT_, text);
+            object.put(TEXT_, "");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -58,11 +73,12 @@ public class Quest {
         }
     }
 
-    public void addTextAnswerItem(String text) {
+
+    public void addTextAnswerItem() {
         JSONObject object = new JSONObject();
         try {
             object.put(TYPE, TEXT_ANSWER);
-            object.put(TEXT_ANSWER_, text);
+            object.put(TEXT_ANSWER_, "");
         } catch (JSONException e) {
             e.printStackTrace();
         }

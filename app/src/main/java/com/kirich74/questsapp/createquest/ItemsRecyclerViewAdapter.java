@@ -17,7 +17,16 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import static com.kirich74.questsapp.data.ItemType.*;
+import static com.kirich74.questsapp.data.ItemType.ADD_BUTTONS;
+import static com.kirich74.questsapp.data.ItemType.DESCRIPTION;
+import static com.kirich74.questsapp.data.ItemType.MAIN_INFO;
+import static com.kirich74.questsapp.data.ItemType.NAME;
+import static com.kirich74.questsapp.data.ItemType.TEXT;
+import static com.kirich74.questsapp.data.ItemType.TEXT_;
+import static com.kirich74.questsapp.data.ItemType.TEXT_ANSWER;
+import static com.kirich74.questsapp.data.ItemType.TEXT_ANSWER_;
+import static com.kirich74.questsapp.data.ItemType.TYPE;
+import static com.kirich74.questsapp.data.ItemType.UNKNOWN_TYPE;
 
 /**
  * Created by Kirill Pilipenko on 06.07.2017.
@@ -28,26 +37,14 @@ public class ItemsRecyclerViewAdapter
 
     private Quest mQuest;
 
-    private String mName;
-
-    private String mDescription;
-
-    private String mMainImageUri;
-
-    private int mAccess;
-
     public ItemsRecyclerViewAdapter(
             final CreateQuestActivity createQuestActivity) {
 
     }
 
-    public void setQuest(String name, String description, String mainImageUri, int access,
+    public void setQuest(/*String name, String description, String mainImageUri, int access,*/
             Quest quest) {
         mQuest = quest;
-        mMainImageUri = mainImageUri;
-        mName = name;
-        mDescription = description;
-        mAccess = access;
     }
 
     @Override
@@ -58,11 +55,11 @@ public class ItemsRecyclerViewAdapter
             case TEXT:
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_create_text, viewGroup, false);
-                return new textViewHolder(view, new TextListener());
+                return new textViewHolder(view, new EditableTextListener());
             case TEXT_ANSWER:
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_create_text_answer, viewGroup, false);
-                return new textAnswerViewHolder(view, new TextAnswerListener());
+                return new textAnswerViewHolder(view, new EditableTextListener());
             case ADD_BUTTONS:
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_create_add_buttons, viewGroup, false);
@@ -70,7 +67,8 @@ public class ItemsRecyclerViewAdapter
             case MAIN_INFO:
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_create_main_info, viewGroup, false);
-                return new mainInfoViewHolder(view);
+                return new mainInfoViewHolder(view, new EditableTextListener(),
+                        new EditableTextListener());
             default:
                 return null;
         }
@@ -81,12 +79,12 @@ public class ItemsRecyclerViewAdapter
         switch (holder.getItemViewType()) {
             case TEXT:
                 textViewHolder textViewHolder = (textViewHolder) holder;
-                textViewHolder.mTextListener.updatePosition(position);
+                textViewHolder.mTextListener.updatePosition(position, TEXT);
                 textViewHolder.bind(mQuest.getItem(position));
                 break;
             case TEXT_ANSWER:
                 textAnswerViewHolder textAnswerViewHolder = (textAnswerViewHolder) holder;
-                textAnswerViewHolder.mTextAnswerListener.updatePosition(position);
+                textAnswerViewHolder.mTextAnswerListener.updatePosition(position, TEXT_ANSWER);
                 textAnswerViewHolder.bind(mQuest.getItem(position));
                 break;
             case ADD_BUTTONS:
@@ -95,7 +93,10 @@ public class ItemsRecyclerViewAdapter
                 break;
             case MAIN_INFO:
                 mainInfoViewHolder mainInfoViewHolder = (mainInfoViewHolder) holder;
-                mainInfoViewHolder.bind(mName, mDescription);
+                mainInfoViewHolder.mNameListener.updatePosition(position, NAME);
+                mainInfoViewHolder.mDescriptionListener.updatePosition(position, DESCRIPTION);
+                mainInfoViewHolder.bind(mQuest.mName, mQuest.mDescription);
+                break;
         }
     }
 
@@ -119,7 +120,7 @@ public class ItemsRecyclerViewAdapter
     @Override
     public int getItemCount() {
         //We always show first and last items (with main info and with add buttons)
-        return mQuest == null ? 2
+        return mQuest == null ? 0
                 : mQuest.size() + 2;
     }
 
@@ -139,14 +140,14 @@ public class ItemsRecyclerViewAdapter
             mAddText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    mQuest.addTextItem("");
+                    mQuest.addTextItem();
                     notifyDataSetChanged();
                 }
             });
             mAddTextAnswer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    mQuest.addTextAnswerItem("");
+                    mQuest.addTextAnswerItem();
                     notifyDataSetChanged();
                 }
             });
@@ -155,36 +156,44 @@ public class ItemsRecyclerViewAdapter
 
     public class mainInfoViewHolder extends RecyclerView.ViewHolder {
 
+        public EditableTextListener mNameListener, mDescriptionListener;
+
         private ImageView mImageDescription;
 
         private Button mChoosePhotoButton;
 
-        private EditText mTitle, mDescription;
+        private EditText mName, mDescription;
 
-        mainInfoViewHolder(final View itemView) {
+        mainInfoViewHolder(final View itemView, EditableTextListener nameListener,
+                EditableTextListener descriptionListener) {
             super(itemView);
             mImageDescription = (ImageView) itemView.findViewById(R.id.image_description_create);
             mChoosePhotoButton = (Button) itemView.findViewById(R.id.choose_photo_button);
-            mTitle = (EditText) itemView.findViewById(R.id.quest_title_edit_text);
+            mName = (EditText) itemView.findViewById(R.id.quest_title_edit_text);
             mDescription = (EditText) itemView.findViewById(R.id.quest_description_edit_text);
+            mNameListener = nameListener;
+            mDescriptionListener = descriptionListener;
+            mName.addTextChangedListener(mNameListener);
+            mDescription.addTextChangedListener(mDescriptionListener);
         }
 
         public void bind(String name, String description) {
-            mTitle.setText(name);
+            mName.setText(name);
             mDescription.setText(description);
+            //TODO picture, button
         }
     }
 
     public class textViewHolder extends RecyclerView.ViewHolder {
 
-        public TextListener mTextListener;
+        public EditableTextListener mTextListener;
 
         private EditText mEditText;
 
-        textViewHolder(final View itemView, TextListener textListener) {
+        textViewHolder(final View itemView, EditableTextListener listener) {
             super(itemView);
-            mEditText = (EditText) itemView.findViewById(R.id.item_text);
-            mTextListener = textListener;
+            mEditText = (EditText) itemView.findViewById(R.id.item_create_text);
+            mTextListener = listener;
             mEditText.addTextChangedListener(mTextListener);
         }
 
@@ -199,15 +208,15 @@ public class ItemsRecyclerViewAdapter
 
     public class textAnswerViewHolder extends RecyclerView.ViewHolder {
 
-        public TextAnswerListener mTextAnswerListener;
+        public EditableTextListener mTextAnswerListener;
 
         private EditText mEditText;
 
-        textAnswerViewHolder(final View itemView, TextAnswerListener textAnswerListener) {
+        textAnswerViewHolder(final View itemView, EditableTextListener listener) {
             super(itemView);
-            mEditText = (EditText) itemView.findViewById(R.id.item_text_answer);
-            mTextAnswerListener = textAnswerListener;
-            mEditText.addTextChangedListener(textAnswerListener);
+            mEditText = (EditText) itemView.findViewById(R.id.item_create_text_answer);
+            mTextAnswerListener = listener;
+            mEditText.addTextChangedListener(listener);
         }
 
         public void bind(@NonNull final JSONObject item) {
@@ -219,12 +228,15 @@ public class ItemsRecyclerViewAdapter
         }
     }
 
-    private class TextListener implements TextWatcher {
+    private class EditableTextListener implements TextWatcher {
+
+        int type;
 
         private int position;
 
-        public void updatePosition(int position) {
+        public void updatePosition(int position, int type) {
             this.position = position;
+            this.type = type;
         }
 
         @Override
@@ -233,30 +245,20 @@ public class ItemsRecyclerViewAdapter
 
         @Override
         public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            mQuest.editTextItem(position, charSequence.toString());
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-
-        }
-    }
-
-    private class TextAnswerListener implements TextWatcher {
-
-        private int position;
-
-        public void updatePosition(int position) {
-            this.position = position;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            mQuest.editTextAnswerItem(position, charSequence.toString());
+            switch (type) {
+                case TEXT:
+                    mQuest.editTextItem(position, charSequence.toString());
+                    break;
+                case TEXT_ANSWER:
+                    mQuest.editTextAnswerItem(position, charSequence.toString());
+                    break;
+                case NAME:
+                    mQuest.mName = charSequence.toString();
+                    break;
+                case DESCRIPTION:
+                    mQuest.mDescription = charSequence.toString();
+                    break;
+            }
         }
 
         @Override
