@@ -19,6 +19,7 @@ import android.widget.ImageView;
 
 import static com.kirich74.questsapp.data.ItemType.ADD_BUTTONS;
 import static com.kirich74.questsapp.data.ItemType.DESCRIPTION;
+import static com.kirich74.questsapp.data.ItemType.IMAGE;
 import static com.kirich74.questsapp.data.ItemType.MAIN_INFO;
 import static com.kirich74.questsapp.data.ItemType.NAME;
 import static com.kirich74.questsapp.data.ItemType.TEXT;
@@ -69,6 +70,10 @@ public class ItemsRecyclerViewAdapter
                         .inflate(R.layout.item_create_main_info, viewGroup, false);
                 return new mainInfoViewHolder(view, new EditableTextListener(),
                         new EditableTextListener());
+            case IMAGE:
+                view = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.item_create_image, viewGroup, false);
+                return new ImageViewHolder(view);
             default:
                 return null;
         }
@@ -96,6 +101,10 @@ public class ItemsRecyclerViewAdapter
                 mainInfoViewHolder.mNameListener.updatePosition(position, NAME);
                 mainInfoViewHolder.mDescriptionListener.updatePosition(position, DESCRIPTION);
                 mainInfoViewHolder.bind(mQuest.mName, mQuest.mDescription);
+                break;
+            case IMAGE:
+                ImageViewHolder imageViewHolder = (ImageViewHolder) holder;
+                imageViewHolder.bind();
                 break;
         }
     }
@@ -126,14 +135,13 @@ public class ItemsRecyclerViewAdapter
 
     public class addButtonsViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageButton mAddText;
-
-        private ImageButton mAddTextAnswer;
+        private ImageButton mAddText, mAddTextAnswer, mAddImage;
 
         addButtonsViewHolder(final View itemView) {
             super(itemView);
             mAddText = (ImageButton) itemView.findViewById(R.id.add_text_button);
             mAddTextAnswer = (ImageButton) itemView.findViewById(R.id.add_text_answer_button);
+            mAddImage = (ImageButton) itemView.findViewById(R.id.add_image_button);
         }
 
         public void bind() {
@@ -148,6 +156,13 @@ public class ItemsRecyclerViewAdapter
                 @Override
                 public void onClick(final View v) {
                     mQuest.addTextAnswerItem();
+                    notifyDataSetChanged();
+                }
+            });
+            mAddImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    mQuest.addImageItem();
                     notifyDataSetChanged();
                 }
             });
@@ -225,6 +240,28 @@ public class ItemsRecyclerViewAdapter
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public class ImageViewHolder extends RecyclerView.ViewHolder {
+
+        private ImageView mImageView;
+
+        private Button mSetImageButton;
+
+        ImageViewHolder(final View itemView) {
+            super(itemView);
+            mImageView = (ImageView) itemView.findViewById(R.id.item_create_image);
+            mSetImageButton = (Button) itemView.findViewById(R.id.item_create_choose_photo_button);
+        }
+
+        public void bind() {
+            mSetImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    //TODO
+                }
+            });
         }
     }
 

@@ -17,6 +17,7 @@ public class ItemType {
     public static final String TYPE = "type";
     public static final String TEXT_ = "text";
     public static final String TEXT_ANSWER_ = "text answer";
+    public static final String IMAGE_ = "image";
     private ItemType() {
     }
 }
