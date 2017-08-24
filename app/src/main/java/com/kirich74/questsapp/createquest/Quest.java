@@ -6,6 +6,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.kirich74.questsapp.data.ItemType.IMAGE;
+import static com.kirich74.questsapp.data.ItemType.IMAGE_;
 import static com.kirich74.questsapp.data.ItemType.TEXT;
 import static com.kirich74.questsapp.data.ItemType.TEXT_;
 import static com.kirich74.questsapp.data.ItemType.TEXT_ANSWER;
@@ -85,10 +87,30 @@ public class Quest {
         quest.add(object);
     }
 
+    public void addImageItem() {
+        JSONObject object = new JSONObject();
+        try {
+            object.put(TYPE, IMAGE);
+            object.put(IMAGE_, "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        quest.add(object);
+    }
+
     public void editTextAnswerItem(int position, String text) {
         quest.get(realPosition(position)).remove(TEXT_ANSWER_);
         try {
             quest.get(realPosition(position)).put(TEXT_ANSWER_, text);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void editImageItem(int position, String image) {
+        quest.get(realPosition(position)).remove(IMAGE_);
+        try {
+            quest.get(realPosition(position)).put(IMAGE_, image);
         } catch (JSONException e) {
             e.printStackTrace();
         }

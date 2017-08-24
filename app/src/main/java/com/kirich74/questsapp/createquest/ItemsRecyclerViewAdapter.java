@@ -19,6 +19,7 @@ import android.widget.ImageView;
 
 import static com.kirich74.questsapp.data.ItemType.ADD_BUTTONS;
 import static com.kirich74.questsapp.data.ItemType.DESCRIPTION;
+import static com.kirich74.questsapp.data.ItemType.IMAGE;
 import static com.kirich74.questsapp.data.ItemType.MAIN_INFO;
 import static com.kirich74.questsapp.data.ItemType.NAME;
 import static com.kirich74.questsapp.data.ItemType.TEXT;
@@ -55,20 +56,24 @@ public class ItemsRecyclerViewAdapter
             case TEXT:
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_create_text, viewGroup, false);
-                return new textViewHolder(view, new EditableTextListener());
+                return new TextViewHolder(view, new EditableTextListener());
             case TEXT_ANSWER:
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_create_text_answer, viewGroup, false);
-                return new textAnswerViewHolder(view, new EditableTextListener());
+                return new TextAnswerViewHolder(view, new EditableTextListener());
             case ADD_BUTTONS:
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_create_add_buttons, viewGroup, false);
-                return new addButtonsViewHolder(view);
+                return new AddButtonsViewHolder(view);
             case MAIN_INFO:
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_create_main_info, viewGroup, false);
-                return new mainInfoViewHolder(view, new EditableTextListener(),
+                return new MainInfoViewHolder(view, new EditableTextListener(),
                         new EditableTextListener());
+            case IMAGE:
+                view = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.item_create_image, viewGroup, false);
+                return new ImageViewHolder(view);
             default:
                 return null;
         }
@@ -78,24 +83,28 @@ public class ItemsRecyclerViewAdapter
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         switch (holder.getItemViewType()) {
             case TEXT:
-                textViewHolder textViewHolder = (textViewHolder) holder;
+                TextViewHolder textViewHolder = (TextViewHolder) holder;
                 textViewHolder.mTextListener.updatePosition(position, TEXT);
                 textViewHolder.bind(mQuest.getItem(position));
                 break;
             case TEXT_ANSWER:
-                textAnswerViewHolder textAnswerViewHolder = (textAnswerViewHolder) holder;
+                TextAnswerViewHolder textAnswerViewHolder = (TextAnswerViewHolder) holder;
                 textAnswerViewHolder.mTextAnswerListener.updatePosition(position, TEXT_ANSWER);
                 textAnswerViewHolder.bind(mQuest.getItem(position));
                 break;
             case ADD_BUTTONS:
-                addButtonsViewHolder addButtonsViewHolder = (addButtonsViewHolder) holder;
+                AddButtonsViewHolder addButtonsViewHolder = (AddButtonsViewHolder) holder;
                 addButtonsViewHolder.bind();
                 break;
             case MAIN_INFO:
-                mainInfoViewHolder mainInfoViewHolder = (mainInfoViewHolder) holder;
+                MainInfoViewHolder mainInfoViewHolder = (MainInfoViewHolder) holder;
                 mainInfoViewHolder.mNameListener.updatePosition(position, NAME);
                 mainInfoViewHolder.mDescriptionListener.updatePosition(position, DESCRIPTION);
                 mainInfoViewHolder.bind(mQuest.mName, mQuest.mDescription);
+                break;
+            case IMAGE:
+                ImageViewHolder imageViewHolder = (ImageViewHolder) holder;
+                imageViewHolder.bind();
                 break;
         }
     }
@@ -116,7 +125,6 @@ public class ItemsRecyclerViewAdapter
         return UNKNOWN_TYPE;
     }
 
-
     @Override
     public int getItemCount() {
         //We always show first and last items (with main info and with add buttons)
@@ -124,16 +132,15 @@ public class ItemsRecyclerViewAdapter
                 : mQuest.size() + 2;
     }
 
-    public class addButtonsViewHolder extends RecyclerView.ViewHolder {
+    public class AddButtonsViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageButton mAddText;
+        private ImageButton mAddText, mAddTextAnswer, mAddImage;
 
-        private ImageButton mAddTextAnswer;
-
-        addButtonsViewHolder(final View itemView) {
+        AddButtonsViewHolder(final View itemView) {
             super(itemView);
             mAddText = (ImageButton) itemView.findViewById(R.id.add_text_button);
             mAddTextAnswer = (ImageButton) itemView.findViewById(R.id.add_text_answer_button);
+            mAddImage = (ImageButton) itemView.findViewById(R.id.add_image_button);
         }
 
         public void bind() {
@@ -151,10 +158,17 @@ public class ItemsRecyclerViewAdapter
                     notifyDataSetChanged();
                 }
             });
+            mAddImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    mQuest.addImageItem();
+                    notifyDataSetChanged();
+                }
+            });
         }
     }
 
-    public class mainInfoViewHolder extends RecyclerView.ViewHolder {
+    public class MainInfoViewHolder extends RecyclerView.ViewHolder {
 
         public EditableTextListener mNameListener, mDescriptionListener;
 
@@ -164,7 +178,7 @@ public class ItemsRecyclerViewAdapter
 
         private EditText mName, mDescription;
 
-        mainInfoViewHolder(final View itemView, EditableTextListener nameListener,
+        MainInfoViewHolder(final View itemView, EditableTextListener nameListener,
                 EditableTextListener descriptionListener) {
             super(itemView);
             mImageDescription = (ImageView) itemView.findViewById(R.id.image_description_create);
@@ -184,13 +198,13 @@ public class ItemsRecyclerViewAdapter
         }
     }
 
-    public class textViewHolder extends RecyclerView.ViewHolder {
+    public class TextViewHolder extends RecyclerView.ViewHolder {
 
         public EditableTextListener mTextListener;
 
         private EditText mEditText;
 
-        textViewHolder(final View itemView, EditableTextListener listener) {
+        TextViewHolder(final View itemView, EditableTextListener listener) {
             super(itemView);
             mEditText = (EditText) itemView.findViewById(R.id.item_create_text);
             mTextListener = listener;
@@ -206,13 +220,13 @@ public class ItemsRecyclerViewAdapter
         }
     }
 
-    public class textAnswerViewHolder extends RecyclerView.ViewHolder {
+    public class TextAnswerViewHolder extends RecyclerView.ViewHolder {
 
         public EditableTextListener mTextAnswerListener;
 
         private EditText mEditText;
 
-        textAnswerViewHolder(final View itemView, EditableTextListener listener) {
+        TextAnswerViewHolder(final View itemView, EditableTextListener listener) {
             super(itemView);
             mEditText = (EditText) itemView.findViewById(R.id.item_create_text_answer);
             mTextAnswerListener = listener;
@@ -225,6 +239,28 @@ public class ItemsRecyclerViewAdapter
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public class ImageViewHolder extends RecyclerView.ViewHolder {
+
+        private ImageView mImageView;
+
+        private Button mSetImageButton;
+
+        ImageViewHolder(final View itemView) {
+            super(itemView);
+            mImageView = (ImageView) itemView.findViewById(R.id.item_create_image);
+            mSetImageButton = (Button) itemView.findViewById(R.id.item_create_choose_photo_button);
+        }
+
+        public void bind() {
+            mSetImageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    //TODO
+                }
+            });
         }
     }
 
