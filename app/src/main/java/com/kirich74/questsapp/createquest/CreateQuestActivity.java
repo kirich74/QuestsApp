@@ -10,8 +10,10 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,10 +21,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.IOException;
+
 public class CreateQuestActivity extends MvpActivity
-        implements CreateQuestView, android.app.LoaderManager.LoaderCallbacks<Cursor> {
+        implements CreateQuestView, android.app.LoaderManager.LoaderCallbacks<Cursor>,
+        onItemActionListener {
 
     public static final String TAG = "CreateQuestActivity";
+
+    static final int GALLERY_REQUEST = 1;
 
     private static final String QUEST = "QUEST";
 
@@ -46,7 +53,6 @@ public class CreateQuestActivity extends MvpActivity
 
         return intent;
     }
-
 
     @Override
     public void onSaveQuest(final ContentValues values, final Uri currentQuestUri) {
@@ -109,7 +115,6 @@ public class CreateQuestActivity extends MvpActivity
                 null);                  // Default sort order
     }
 
-
     @Override
     public void onLoadFinished(final android.content.Loader<Cursor> loader, final Cursor cursor) {
         if (cursor == null || cursor.getCount() < 1) {
@@ -141,6 +146,33 @@ public class CreateQuestActivity extends MvpActivity
     }
 
     @Override
+    public void setImage() {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, GALLERY_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+
+        Bitmap bitmap = null;
+
+        switch(requestCode) {
+            case GALLERY_REQUEST:
+                if(resultCode == RESULT_OK){
+                    Uri selectedImage = imageReturnedIntent.getData();
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    mAdapter.saveImage(bitmap);
+                }
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "oncreate");
         super.onCreate(savedInstanceState);
@@ -158,9 +190,8 @@ public class CreateQuestActivity extends MvpActivity
         setContentView(R.layout.activity_create_quest);
         mRecyclerView = (RecyclerView) findViewById(R.id.create_quest_recycler_view);
         mLinearLayoutManager = new LinearLayoutManager(this);
-        mAdapter = new ItemsRecyclerViewAdapter(this);
+        mAdapter = new ItemsRecyclerViewAdapter(this, this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-
 
         Button button = (Button) findViewById(R.id.save);
         button.setOnClickListener(new View.OnClickListener() {

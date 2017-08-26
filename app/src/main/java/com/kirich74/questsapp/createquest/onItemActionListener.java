@@ -8,6 +8,6 @@ import org.json.JSONObject;
 
 public interface onItemActionListener {
 
-    void save ();
+    void setImage ();
 
 }

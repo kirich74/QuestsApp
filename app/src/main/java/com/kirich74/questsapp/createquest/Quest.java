@@ -4,6 +4,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.net.Uri;
+
 import java.util.ArrayList;
 
 import static com.kirich74.questsapp.data.ItemType.IMAGE;
@@ -21,6 +23,8 @@ import static com.kirich74.questsapp.data.ItemType.TYPE;
 public class Quest {
 
     public ArrayList<JSONObject> quest;
+
+    public String mAuthor;
 
     public String mName;
 
@@ -114,6 +118,15 @@ public class Quest {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public Uri getImageUri(int position) {
+        try {
+            return Uri.parse(quest.get(realPosition(position)).getString(IMAGE_));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 

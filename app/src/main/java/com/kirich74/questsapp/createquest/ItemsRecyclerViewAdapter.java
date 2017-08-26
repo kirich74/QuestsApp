@@ -1,15 +1,15 @@
 package com.kirich74.questsapp.createquest;
 
-import com.kirich74.questsapp.QuestApplication;
 import com.kirich74.questsapp.R;
 import com.kirich74.questsapp.data.ImageUtils;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -41,11 +41,17 @@ import static com.kirich74.questsapp.data.ItemType.UNKNOWN_TYPE;
 public class ItemsRecyclerViewAdapter
         extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    public int selectedStep;
+
     private Quest mQuest;
 
-    public ItemsRecyclerViewAdapter(
-            final CreateQuestActivity createQuestActivity) {
+    private onItemActionListener mOnItemActionListener;
 
+    private Context mContext;
+
+    ItemsRecyclerViewAdapter(onItemActionListener onItemActionListener, Context context) {
+        mOnItemActionListener = onItemActionListener;
+        mContext = context;
     }
 
     public void setQuest(/*String name, String description, String mainImageUri, int access,*/
@@ -136,6 +142,14 @@ public class ItemsRecyclerViewAdapter
         //We always show first and last items (with main info and with add buttons)
         return mQuest == null ? 0
                 : mQuest.size() + 2;
+    }
+
+    public void saveImage(Bitmap bitmap) {
+        Uri mUri = ImageUtils
+                .saveBitmapToFile(mContext, bitmap, mQuest.mAuthor,
+                        mQuest.mName, selectedStep);
+        mQuest.editImageItem(selectedStep, mUri != null ? mUri.toString() : null);
+        notifyDataSetChanged();
     }
 
     public class addButtonsViewHolder extends RecyclerView.ViewHolder {
@@ -264,10 +278,14 @@ public class ItemsRecyclerViewAdapter
             mSetImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-
-                    ImageUtils.saveBitmapToFile(QuestApplication.getApplication(), res, mQuest.mName, mQuest.mName, getAdapterPosition())
+                    //TODO
+                    selectedStep = getAdapterPosition();
+                    mOnItemActionListener.setImage();
                 }
             });
+
+            Picasso.with(mContext)
+                    .load(mQuest.getImageUri(getAdapterPosition())).resize(50, 50).into(mImageView);
         }
     }
 
