@@ -1,10 +1,15 @@
 package com.kirich74.questsapp.createquest;
 
+import com.kirich74.questsapp.QuestApplication;
 import com.kirich74.questsapp.R;
+import com.kirich74.questsapp.data.ImageUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -259,7 +264,8 @@ public class ItemsRecyclerViewAdapter
             mSetImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    //TODO
+
+                    ImageUtils.saveBitmapToFile(QuestApplication.getApplication(), res, mQuest.mName, mQuest.mName, getAdapterPosition())
                 }
             });
         }
