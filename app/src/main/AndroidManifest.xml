@@ -10,13 +10,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".mainscreen.MainActivity">
+        <activity
+            android:name=".mainscreen.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".createquest.CreateQuestActivity"/>
+        <activity
+            android:name=".createquest.CreateQuestActivity"
+            android:screenOrientation="portrait" />
+
         <provider
             android:name=".data.QuestProvider"
             android:authorities="ru.kirich74.quests"

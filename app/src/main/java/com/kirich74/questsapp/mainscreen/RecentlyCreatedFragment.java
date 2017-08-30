@@ -73,7 +73,7 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
 
         questsRecyclerView = (RecyclerView) view.findViewById(R.id.recently_created_recycler_view);
         questsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mCursorAdapter = new QuestsRecyclerViewAdapter(this, null);
+        mCursorAdapter = new QuestsRecyclerViewAdapter(this, getContext(), null);
         questsRecyclerView.setAdapter(mCursorAdapter);
 
         getLoaderManager().initLoader(QUEST_LOADER, null, this);
@@ -105,6 +105,7 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
                 QuestEntry._ID,
                 QuestEntry.COLUMN_QUEST_NAME,
                 QuestEntry.COLUMN_QUEST_AUTHOR,
+                QuestEntry.COLUMN_QUEST_IMAGE,
                 QuestEntry.COLUMN_QUEST_DESCRIPTION};
 
         // This loader will execute the ContentProvider's query method on a background thread

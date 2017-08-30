@@ -17,7 +17,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -81,7 +80,8 @@ public class ItemsRecyclerViewAdapter
                         .inflate(R.layout.item_create_add_buttons, viewGroup, false);
                 return new addButtonsViewHolder(view);
             case MAIN_INFO:
-                WindowManager windowManager = (WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE);
+                WindowManager windowManager = (WindowManager) mContext
+                        .getSystemService(Context.WINDOW_SERVICE);
                 viewWidth = windowManager.getDefaultDisplay().getWidth();
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_create_main_info, viewGroup, false);
@@ -154,8 +154,12 @@ public class ItemsRecyclerViewAdapter
         Uri mUri = ImageUtils
                 .saveBitmapToFile(mContext, bitmap, mQuest.mAuthor,
                         mQuest.mName, selectedStep);
-        mQuest.editImageItem(selectedStep, mUri != null ? mUri.toString() : null);
-        notifyDataSetChanged();
+        if (selectedStep == 0) {
+            mQuest.mMainImageUri = mUri.toString();
+        } else {
+            mQuest.editImageItem(selectedStep, mUri != null ? mUri.toString() : null);
+        }
+            notifyDataSetChanged();
     }
 
     public class addButtonsViewHolder extends RecyclerView.ViewHolder {
@@ -220,7 +224,18 @@ public class ItemsRecyclerViewAdapter
         public void bind(String name, String description) {
             mName.setText(name);
             mDescription.setText(description);
-            //TODO picture, button
+            mChoosePhotoButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    selectedStep = getAdapterPosition();
+                    mOnItemActionListener.setImage();
+                }
+            });
+
+            Picasso.with(mContext)
+                    .load(mQuest.mMainImageUri).resize(viewWidth, viewWidth).centerCrop()
+                    .into(mImageDescription);
+
         }
     }
 
@@ -291,7 +306,8 @@ public class ItemsRecyclerViewAdapter
             });
 
             Picasso.with(mContext)
-                    .load(mQuest.getImageUri(getAdapterPosition())).resize(viewWidth, viewWidth).centerCrop().into(mImageView);
+                    .load(mQuest.getImageUri(getAdapterPosition())).resize(viewWidth, viewWidth)
+                    .centerCrop().into(mImageView);
         }
     }
 

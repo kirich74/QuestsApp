@@ -2,12 +2,15 @@ package com.kirich74.questsapp.mainscreen;
 
 import com.kirich74.questsapp.R;
 import com.kirich74.questsapp.data.QuestContract;
+import com.squareup.picasso.Picasso;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,16 +22,24 @@ import android.widget.TextView;
 public class QuestsRecyclerViewAdapter
         extends RecyclerView.Adapter<QuestsRecyclerViewAdapter.ViewHolder> {
 
+    private final int viewWidth;
+
     private onQuestActionListener mOnQuestActionListener;
 
     private Cursor mCursor;
 
-    public QuestsRecyclerViewAdapter(onQuestActionListener onQuestActionListener, Cursor cursor) {
+    private Context mContext;
+
+    public QuestsRecyclerViewAdapter(onQuestActionListener onQuestActionListener, Context context, Cursor cursor) {
         mOnQuestActionListener = onQuestActionListener;
         mCursor = cursor;
+        mContext = context;
+        WindowManager windowManager = (WindowManager) mContext
+                .getSystemService(Context.WINDOW_SERVICE);
+        viewWidth = windowManager.getDefaultDisplay().getWidth();
     }
 
-    public void setCursor(Cursor cursor){
+    public void setCursor(Cursor cursor) {
         mCursor = cursor;
     }
 
@@ -75,6 +86,12 @@ public class QuestsRecyclerViewAdapter
             id = mCursor.getInt(mCursor.getColumnIndexOrThrow(QuestContract.QuestEntry._ID));
             name.setText(cursor.getString(
                     cursor.getColumnIndexOrThrow(QuestContract.QuestEntry.COLUMN_QUEST_NAME)));
+            Picasso.with(mContext)
+                    .load(cursor.getString(
+                            cursor.getColumnIndexOrThrow(
+                                    QuestContract.QuestEntry.COLUMN_QUEST_IMAGE)))
+                    .resize(viewWidth, viewWidth).centerCrop()
+                    .into(imageDescription);
             description.setText(cursor.getString(
                     cursor.getColumnIndexOrThrow(
                             QuestContract.QuestEntry.COLUMN_QUEST_DESCRIPTION)));
