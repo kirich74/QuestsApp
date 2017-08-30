@@ -17,6 +17,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -49,6 +51,8 @@ public class ItemsRecyclerViewAdapter
 
     private Context mContext;
 
+    private int viewWidth;
+
     ItemsRecyclerViewAdapter(onItemActionListener onItemActionListener, Context context) {
         mOnItemActionListener = onItemActionListener;
         mContext = context;
@@ -62,7 +66,7 @@ public class ItemsRecyclerViewAdapter
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup viewGroup,
             final int viewType) {
-        View view;
+        final View view;
         switch (viewType) {
             case TEXT:
                 view = LayoutInflater.from(viewGroup.getContext())
@@ -77,6 +81,8 @@ public class ItemsRecyclerViewAdapter
                         .inflate(R.layout.item_create_add_buttons, viewGroup, false);
                 return new addButtonsViewHolder(view);
             case MAIN_INFO:
+                WindowManager windowManager = (WindowManager)mContext.getSystemService(Context.WINDOW_SERVICE);
+                viewWidth = windowManager.getDefaultDisplay().getWidth();
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_create_main_info, viewGroup, false);
                 return new mainInfoViewHolder(view, new EditableTextListener(),
@@ -285,7 +291,7 @@ public class ItemsRecyclerViewAdapter
             });
 
             Picasso.with(mContext)
-                    .load(mQuest.getImageUri(getAdapterPosition())).resize(50, 50).into(mImageView);
+                    .load(mQuest.getImageUri(getAdapterPosition())).resize(viewWidth, viewWidth).centerCrop().into(mImageView);
         }
     }
 
