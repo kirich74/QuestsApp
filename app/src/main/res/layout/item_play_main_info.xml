@@ -9,18 +9,13 @@
         android:paddingRight="16dp">
 
         <ImageView
-            android:id="@+id/image_description_create"
+            android:id="@+id/image_description_play"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/choose_photo_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/choose_photo" />
 
-        <EditText
-            android:id="@+id/quest_title_create_text"
+        <TextView
+            android:id="@+id/quest_title_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="16dp"
@@ -30,13 +25,19 @@
             android:textColor="#333"
             android:textSize="24sp" />
 
-        <EditText
-            android:id="@+id/quest_description_create_text"
+        <TextView
+            android:id="@+id/quest_description_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:paddingBottom="24dp"
             android:text="here is some description of quest" />
+
+        <Button
+            android:id="@+id/start_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/start" />
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

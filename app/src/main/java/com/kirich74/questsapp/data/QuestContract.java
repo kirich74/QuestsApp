@@ -76,7 +76,7 @@ public final class QuestContract {
         /**
          * Access.
          *
-         * The only possible values are {@link #PRIVATE} or {@link #PUBLIC}.
+         * The only possible values are {@link #PLAY} or {@link #CREATE}.
          *
          * Type: INTEGER
          */
@@ -86,14 +86,14 @@ public final class QuestContract {
         /**
          * Possible values for the access of the quest.
          */
-        public static final int PRIVATE = 0;
-        public static final int PUBLIC = 1;
+        public static final int PLAY = 0;
+        public static final int CREATE = 1;
 
         /**
-         * Returns whether or not the given access is {@link #PRIVATE}, {@link #PUBLIC}.
+         * Returns whether or not the given access is {@link #PLAY}, {@link #CREATE}.
          */
         public static boolean isValidAccess(int access) {
-            if (access == PRIVATE || access == PUBLIC) {
+            if (access == PLAY || access == CREATE) {
                 return true;
             }
             return false;

@@ -4,6 +4,7 @@
     <application>
         <activity android:name="com.kirich74.questsapp.createquest.QreateQuestActivity" />
         <activity android:name="com.kirich74.questsapp.createquest.CreateQuestActivity" />
+        <activity android:name="com.kirich74.questsapp.PlayQuestActivity" />
     </application>
 
 </manifest>

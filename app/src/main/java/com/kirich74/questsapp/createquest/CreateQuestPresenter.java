@@ -6,12 +6,9 @@ import com.arellomobile.mvp.MvpPresenter;
 import android.content.ContentValues;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.widget.Toast;
 
-import com.kirich74.questsapp.R;
+import com.kirich74.questsapp.data.Quest;
 import com.kirich74.questsapp.data.QuestContract.QuestEntry;
-
-import static com.kirich74.questsapp.data.ItemType.*;
 
 
 @InjectViewState

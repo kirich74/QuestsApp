@@ -1,4 +1,4 @@
-package com.kirich74.questsapp.createquest;
+package com.kirich74.questsapp.data;
 
 import org.json.JSONArray;
 import org.json.JSONException;
