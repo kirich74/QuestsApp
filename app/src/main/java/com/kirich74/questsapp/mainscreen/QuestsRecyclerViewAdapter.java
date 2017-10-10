@@ -12,8 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Kirill Pilipenko on 12.07.2017.
@@ -30,7 +34,8 @@ public class QuestsRecyclerViewAdapter
 
     private Context mContext;
 
-    public QuestsRecyclerViewAdapter(onQuestActionListener onQuestActionListener, Context context, Cursor cursor) {
+    public QuestsRecyclerViewAdapter(onQuestActionListener onQuestActionListener, Context context,
+            Cursor cursor) {
         mOnQuestActionListener = onQuestActionListener;
         mCursor = cursor;
         mContext = context;
@@ -63,6 +68,7 @@ public class QuestsRecyclerViewAdapter
                 : mCursor.getCount();
     }
 
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         int id;
@@ -73,25 +79,28 @@ public class QuestsRecyclerViewAdapter
 
         private Button startOrCreateButton;
 
-        public ViewHolder(View itemView) {
+        private ImageButton deleteButton;
+
+        public ViewHolder(final View itemView) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.quest_title_text_view);
             author = (TextView) itemView.findViewById(R.id.quest_author_text_view);
             description = (TextView) itemView.findViewById(R.id.quest_description_text_view);
             imageDescription = (ImageView) itemView.findViewById(R.id.image_description);
             startOrCreateButton = (Button) itemView.findViewById(R.id.quest_start_or_edit_button);
+            deleteButton = (ImageButton) itemView.findViewById(R.id.quest_delete_button);
         }
 
         public void bindCursor(final Cursor cursor) {
             id = mCursor.getInt(mCursor.getColumnIndexOrThrow(QuestContract.QuestEntry._ID));
             name.setText(cursor.getString(
                     cursor.getColumnIndexOrThrow(QuestContract.QuestEntry.COLUMN_QUEST_NAME)));
-            Picasso.with(mContext)
-                    .load(cursor.getString(
-                            cursor.getColumnIndexOrThrow(
-                                    QuestContract.QuestEntry.COLUMN_QUEST_IMAGE)))
-                    .resize(viewWidth, viewWidth).centerCrop()
-                    .into(imageDescription);
+            String imagePath = cursor.getString(
+                    cursor.getColumnIndexOrThrow(QuestContract.QuestEntry.COLUMN_QUEST_IMAGE));
+            if (!imagePath.isEmpty()) {
+                Picasso.with(mContext).load(imagePath).resize(viewWidth, viewWidth).centerCrop()
+                        .into(imageDescription);
+            }
             description.setText(cursor.getString(
                     cursor.getColumnIndexOrThrow(
                             QuestContract.QuestEntry.COLUMN_QUEST_DESCRIPTION)));
@@ -102,6 +111,12 @@ public class QuestsRecyclerViewAdapter
                 @Override
                 public void onClick(final View v) {
                     mOnQuestActionListener.startOrEdit(id);
+                }
+            });
+            deleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    mOnQuestActionListener.deleteQuest(id);
                 }
             });
         }

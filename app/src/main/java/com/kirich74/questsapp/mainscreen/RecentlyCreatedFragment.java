@@ -12,12 +12,17 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.kirich74.questsapp.data.QuestContract.QuestEntry;
 
@@ -29,7 +34,7 @@ import com.kirich74.questsapp.data.QuestContract.QuestEntry;
 public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
         implements onQuestActionListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String TAG = "RecentlyCreatedFragment";
+    public static final String TAG = "RecentlyCreatedFragment";;
 
     private int mPage;
 
@@ -41,6 +46,10 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
     QuestsRecyclerViewAdapter mCursorAdapter;
 
     private RecyclerView questsRecyclerView;
+
+    private Toolbar mToolbar;
+
+    private MenuItem deleteItemsMenu;
 
     public static RecentlyCreatedFragment newInstance(int page) {
         RecentlyCreatedFragment fragment = new RecentlyCreatedFragment();
@@ -57,10 +66,15 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
         mPage = getArguments().getInt("page", 0);
     }
 
+
+
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recently_created, container, false);
+        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
+
 
         mFAB = (FloatingActionButton) view.findViewById(R.id.create_new_quest_fab);
         mFAB.setOnClickListener(new View.OnClickListener() {
@@ -83,9 +97,31 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
     @Override
     public void startOrEdit(final int id) {
         Intent intent = new Intent(getContext(), CreateQuestActivity.class);
-        Uri currentPetUri = ContentUris.withAppendedId(QuestEntry.CONTENT_URI, id);
-        intent.setData(currentPetUri);
+        Uri currentQuestUri = ContentUris.withAppendedId(QuestEntry.CONTENT_URI, id);
+        intent.setData(currentQuestUri);
         startActivity(intent);
+    }
+
+    @Override
+    public void deleteQuest(final int id) {
+
+        Uri currentQuestUri = ContentUris.withAppendedId(QuestEntry.CONTENT_URI, id);
+        if (currentQuestUri != null) {
+            // Call the ContentResolver to delete the pet at the given content URI.
+            // Pass in null for the selection and selection args because the mCurrentPetUri
+            // content URI already identifies the pet that we want.
+            int rowsDeleted = getContext().getContentResolver().delete(currentQuestUri, null, null);
+
+            // Show a toast message depending on whether or not the delete was successful.
+            if (rowsDeleted == 0) {
+                // If no rows were deleted, then there was an error with the delete.
+
+            } else {
+                // Otherwise, the delete was successful and we can display a toast.
+
+            }
+        }
+
     }
 
     @Override
@@ -93,10 +129,6 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
         return "EDIT";
     }
 
-    @Override
-    public void deleteQuest(final int id) {
-
-    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {

@@ -42,8 +42,7 @@ public class CreateQuestPresenter extends MvpPresenter<CreateQuestView> {
         // Check if this is supposed to be a new quest
         // and check if all the fields in the editor are blank
         if (mCurrentQuestUri == null &&
-                TextUtils.isEmpty(mQuest.mName) && TextUtils.isEmpty(mQuest.mDescription) &&
-                TextUtils.isEmpty(questData)) {
+                TextUtils.isEmpty(mQuest.mName) && TextUtils.isEmpty(mQuest.mDescription)) {
             // Since no fields were modified, we can return early without creating a new quest.
             // No need to create ContentValues and no need to do any ContentProvider operations.
             return;

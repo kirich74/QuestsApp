@@ -20,6 +20,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -172,9 +173,10 @@ public class CreateQuestActivity extends MvpActivity
         }
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "oncreate");
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
 
         if (savedInstanceState == null) {

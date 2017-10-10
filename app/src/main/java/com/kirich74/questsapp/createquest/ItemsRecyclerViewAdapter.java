@@ -150,6 +150,11 @@ public class ItemsRecyclerViewAdapter
                 : mQuest.size() + 2;
     }
 
+    public void removeItem(int position){
+
+        notifyItemRemoved(position);
+    }
+
     public void saveImage(Bitmap bitmap) {
         Uri mUri = ImageUtils
                 .saveBitmapToFile(mContext, bitmap, mQuest.mAuthor,
@@ -232,9 +237,11 @@ public class ItemsRecyclerViewAdapter
                 }
             });
 
-            Picasso.with(mContext)
-                    .load(mQuest.mMainImageUri).resize(viewWidth, viewWidth).centerCrop()
-                    .into(mImageDescription);
+            if (!mQuest.mMainImageUri.isEmpty()) {
+                Picasso.with(mContext)
+                        .load(mQuest.mMainImageUri).resize(viewWidth, viewWidth).centerCrop()
+                        .into(mImageDescription);
+            }
 
         }
     }
