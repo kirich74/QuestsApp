@@ -19,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import static com.kirich74.questsapp.data.QuestContract.QuestEntry._ID;
+
 /**
  * Created by Kirill Pilipenko on 03.07.2017.
  */
@@ -106,7 +108,7 @@ public class RecentlyPlayedFragment extends android.support.v4.app.Fragment
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         // Define a projection that specifies the columns from the table we care about.
         String[] projection = {
-                QuestContract.QuestEntry._ID,
+                _ID,
                 QuestContract.QuestEntry.COLUMN_QUEST_NAME,
                 QuestContract.QuestEntry.COLUMN_QUEST_AUTHOR,
                 QuestContract.QuestEntry.COLUMN_QUEST_IMAGE,
@@ -119,7 +121,7 @@ public class RecentlyPlayedFragment extends android.support.v4.app.Fragment
                 projection,             // Columns to include in the resulting Cursor
                 null,                   // No selection clause
                 null,                   // No selection arguments
-                null);                  // Default sort order
+                _ID + " DESC");                  // Default sort order
     }
 
     @Override
