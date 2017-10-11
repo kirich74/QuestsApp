@@ -151,7 +151,7 @@ public class ItemsRecyclerViewAdapter
                 : mQuest.size() + 2;
     }
 
-    public void removeItem(int position){
+    public void removeItem(int position) {
 
         notifyItemRemoved(position);
     }
@@ -165,7 +165,7 @@ public class ItemsRecyclerViewAdapter
         } else {
             mQuest.editImageItem(selectedStep, mUri != null ? mUri.toString() : null);
         }
-            notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     public class addButtonsViewHolder extends RecyclerView.ViewHolder {
@@ -313,9 +313,13 @@ public class ItemsRecyclerViewAdapter
                 }
             });
 
-            Picasso.with(mContext)
-                    .load(mQuest.getImageUri(getAdapterPosition())).resize(viewWidth, viewWidth)
-                    .centerCrop().into(mImageView);
+            String imagePath = mQuest.getImageUri(getAdapterPosition()).toString();
+
+            if (!imagePath.isEmpty()) {
+                Picasso.with(mContext)
+                        .load(imagePath).resize(viewWidth, viewWidth)
+                        .centerCrop().into(mImageView);
+            }
         }
     }
 

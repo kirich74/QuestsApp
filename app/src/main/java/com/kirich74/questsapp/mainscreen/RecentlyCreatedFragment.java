@@ -98,6 +98,10 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
         startActivity(intent);
     }
 
+    public void dataChanged(){
+        mCursorAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void deleteQuest(final int id) {
 

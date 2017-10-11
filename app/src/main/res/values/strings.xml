@@ -7,4 +7,6 @@
     <string name="choose_photo">CHOOSE PHOTO</string>
     <string name="delete">delete</string>
     <string name="start">Start</string>
+    <string name="check">Check</string>
+    <string name="finish">Finish</string>
 </resources>

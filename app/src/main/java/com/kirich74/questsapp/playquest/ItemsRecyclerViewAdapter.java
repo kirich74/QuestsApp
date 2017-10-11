@@ -15,8 +15,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,10 +25,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import static com.kirich74.questsapp.data.ItemType.DESCRIPTION;
+import java.util.Objects;
+
+import static com.kirich74.questsapp.data.ItemType.ANSWER;
 import static com.kirich74.questsapp.data.ItemType.IMAGE;
+import static com.kirich74.questsapp.data.ItemType.IMAGE_;
 import static com.kirich74.questsapp.data.ItemType.MAIN_INFO;
-import static com.kirich74.questsapp.data.ItemType.NAME;
+import static com.kirich74.questsapp.data.ItemType.QUEST_FINISHED;
 import static com.kirich74.questsapp.data.ItemType.TEXT;
 import static com.kirich74.questsapp.data.ItemType.TEXT_;
 import static com.kirich74.questsapp.data.ItemType.TEXT_ANSWER;
@@ -47,13 +48,65 @@ public class ItemsRecyclerViewAdapter
 
     private int viewWidth;
 
-    ItemsRecyclerViewAdapter(Context context) {
+    private int begin, end;
+
+    private com.kirich74.questsapp.playquest.onItemActionListener mOnItemActionListener;
+
+    ItemsRecyclerViewAdapter(Context context, onItemActionListener onItemActionListener) {
         mContext = context;
+        mOnItemActionListener = onItemActionListener;
     }
 
     public void setQuest(Quest quest) {
         mQuest = quest;
+        begin = 0;
+        end = 0;
     }
+
+    public void nextStep() {
+        begin = end + 1;
+        if (begin > mQuest.size()) {
+            end = begin;
+            notifyDataSetChanged();
+            return;
+        } else {
+            for (int i = begin; i < mQuest.size(); i++) {
+                try {
+                    if (mQuest.getItem(i).getInt(TYPE) > ANSWER) {
+                        end = i;
+                        notifyDataSetChanged();
+                        return;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        end = mQuest.size();
+        notifyDataSetChanged();
+    }
+
+    public void previousStep() {
+        end = begin - 1;
+        if (end < 0) {
+            return;
+        } else {
+            for (int i = end; i > 0; i--) {
+                try {
+                    if (mQuest.getItem(i).getInt(TYPE) > ANSWER) {
+                        begin = i + 1;
+                        notifyDataSetChanged();
+                        return;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        begin = 0;
+        notifyDataSetChanged();
+    }
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(final ViewGroup viewGroup,
@@ -83,6 +136,11 @@ public class ItemsRecyclerViewAdapter
                         .inflate(R.layout.item_play_image, viewGroup, false);
                 return new com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.ImageViewHolder(
                         view);
+            case QUEST_FINISHED:
+                view = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.item_play_finish, viewGroup, false);
+                return new com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.FinishViewHolder(
+                        view);
             default:
                 return null;
         }
@@ -95,13 +153,13 @@ public class ItemsRecyclerViewAdapter
                 com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.textViewHolder
                         textViewHolder
                         = (com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.textViewHolder) holder;
-                textViewHolder.bind(mQuest.getItem(position));
+                textViewHolder.bind(mQuest.getItem(getPositionInQuest(position)));
                 break;
             case TEXT_ANSWER:
                 com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.textAnswerViewHolder
                         textAnswerViewHolder
                         = (com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.textAnswerViewHolder) holder;
-                textAnswerViewHolder.bind(mQuest.getItem(position));
+                textAnswerViewHolder.bind(mQuest.getItem(getPositionInQuest(position)));
                 break;
             case MAIN_INFO:
                 com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.mainInfoViewHolder
@@ -113,15 +171,25 @@ public class ItemsRecyclerViewAdapter
                 com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.ImageViewHolder
                         imageViewHolder
                         = (com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.ImageViewHolder) holder;
-                imageViewHolder.bind();
+                imageViewHolder.bind(mQuest.getItem(getPositionInQuest(position)));
+                break;
+            case QUEST_FINISHED:
+                com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.FinishViewHolder
+                        finishViewHolder
+                        = (com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.FinishViewHolder) holder;
+                finishViewHolder.bind();
                 break;
         }
     }
 
     @Override
     public int getItemViewType(int position) {
+        position = getPositionInQuest(position);
         if (position == 0) {
             return MAIN_INFO;
+        }
+        if (position == mQuest.size() + 1) {
+            return QUEST_FINISHED;
         }
         try {
             return mQuest.getItem(position).getInt(TYPE);
@@ -131,12 +199,22 @@ public class ItemsRecyclerViewAdapter
         return UNKNOWN_TYPE;
     }
 
-
     @Override
     public int getItemCount() {
         //We always show first item (with main info)
-        return mQuest == null ? 0
-                : mQuest.size();
+        //and when quest is finished we show button that it finished
+        try {
+            return mQuest == null ? 0
+                    : (end == mQuest.size() && mQuest.getItem(end).getInt(TYPE) < ANSWER) ? end - begin + 2
+                            : end - begin + 1;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getPositionInQuest(int position) {
+        return position + begin;
     }
 
     public class mainInfoViewHolder extends RecyclerView.ViewHolder {
@@ -161,7 +239,7 @@ public class ItemsRecyclerViewAdapter
             mStartButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    //TODO
+                    nextStep();
                 }
             });
 
@@ -206,22 +284,41 @@ public class ItemsRecyclerViewAdapter
         }
 
         public void bind(@NonNull final JSONObject item) {
-            try {
-                mEditText.setText(item.getString(TEXT_ANSWER_));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            mEditText.setText("");
             mCheckAnswerButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
                     try {
-                        if (mEditText.getText().toString() == item.getString(TEXT_ANSWER_)) {
+                        if (Objects.equals(mEditText.getText().toString(),
+                                item.getString(TEXT_ANSWER_))) {
                             Log.d("Check", "correct");
-                            //TODO
+                            nextStep();
+                        } else {
+                            mOnItemActionListener.wrongAnswerToast();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                }
+            });
+        }
+    }
+
+    public class FinishViewHolder extends RecyclerView.ViewHolder {
+
+        private Button mFinishButton;
+
+        FinishViewHolder(final View itemView) {
+            super(itemView);
+            mFinishButton = (Button) itemView
+                    .findViewById(R.id.item_play_finish_button);
+        }
+
+        public void bind() {
+            mFinishButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    mOnItemActionListener.questCompleted();
                 }
             });
         }
@@ -236,53 +333,19 @@ public class ItemsRecyclerViewAdapter
             mImageView = (ImageView) itemView.findViewById(R.id.item_play_image);
         }
 
-        public void bind() {
-            Uri imagePath = mQuest.getImageUri(getAdapterPosition());
-            if (!imagePath.toString().isEmpty()) {
+        public void bind(@NonNull final JSONObject item) {
+            String imagePath = null;
+            try {
+                imagePath = item.getString(IMAGE_);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (!imagePath.isEmpty()) {
                 Picasso.with(mContext)
-                        .load(mQuest.getImageUri(getAdapterPosition())).resize(viewWidth, viewWidth)
+                        .load(Uri.parse(imagePath)).resize(viewWidth, viewWidth)
                         .centerCrop().into(mImageView);
             }
         }
     }
-
-    /*private class EditableTextListener implements TextWatcher {
-
-        int type;
-
-        private int position;
-
-        public void updatePosition(int position, int type) {
-            this.position = position;
-            this.type = type;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-            switch (type) {
-                case TEXT:
-                    mQuest.editTextItem(position, charSequence.toString());
-                    break;
-                case TEXT_ANSWER:
-                    mQuest.editTextAnswerItem(position, charSequence.toString());
-                    break;
-                case NAME:
-                    mQuest.mName = charSequence.toString();
-                    break;
-                case DESCRIPTION:
-                    mQuest.mDescription = charSequence.toString();
-                    break;
-            }
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-
-        }
-    }*/
 }
 

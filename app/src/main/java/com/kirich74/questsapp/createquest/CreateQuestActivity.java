@@ -5,6 +5,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.kirich74.questsapp.R;
 import com.kirich74.questsapp.data.Quest;
 import com.kirich74.questsapp.data.QuestContract.QuestEntry;
+import com.kirich74.questsapp.mainscreen.RecentlyCreatedFragment;
 
 import android.content.ContentValues;
 import android.content.Context;

@@ -3,28 +3,24 @@ package com.kirich74.questsapp.playquest;
 import com.arellomobile.mvp.MvpActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.kirich74.questsapp.R;
-import com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter;
 import com.kirich74.questsapp.data.Quest;
 import com.kirich74.questsapp.data.QuestContract;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-
-import java.io.IOException;
+import android.widget.Toast;
 
 public class PlayQuestActivity extends MvpActivity
-        implements android.app.LoaderManager.LoaderCallbacks<Cursor>, PlayQuestView {
+        implements android.app.LoaderManager.LoaderCallbacks<Cursor>, PlayQuestView,
+        onItemActionListener {
 
     public static final String TAG = "PlayQuestActivity";
 
@@ -110,7 +106,19 @@ public class PlayQuestActivity extends MvpActivity
 
     @Override
     public void showStepRecyclerView(final Quest quest, final int begin, final int end) {
+        mAdapter.setQuest(quest);
+        mRecyclerView.setAdapter(mAdapter);
+    }
 
+    @Override
+    public void questCompleted() {
+        Toast.makeText(this, "Quest successfully completed", Toast.LENGTH_LONG).show();
+        finish();
+    }
+
+    @Override
+    public void wrongAnswerToast() {
+        Toast.makeText(this, "Wrong answer", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -132,7 +140,7 @@ public class PlayQuestActivity extends MvpActivity
         setContentView(R.layout.activity_play_quest);
         mRecyclerView = (RecyclerView) findViewById(R.id.play_quest_recycler_view);
         mLinearLayoutManager = new LinearLayoutManager(this);
-        mAdapter = new ItemsRecyclerViewAdapter(this);
+        mAdapter = new ItemsRecyclerViewAdapter(this, this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
 
 
