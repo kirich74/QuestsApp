@@ -3,7 +3,9 @@ package com.kirich74.questsapp.createquest;
 import com.arellomobile.mvp.MvpActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.kirich74.questsapp.R;
+import com.kirich74.questsapp.data.Quest;
 import com.kirich74.questsapp.data.QuestContract.QuestEntry;
+import com.kirich74.questsapp.mainscreen.RecentlyCreatedFragment;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -20,7 +22,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import java.io.IOException;
 

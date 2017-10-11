@@ -1,6 +1,7 @@
 package com.kirich74.questsapp.createquest;
 
 import com.arellomobile.mvp.MvpView;
+import com.kirich74.questsapp.data.Quest;
 
 import android.content.ContentValues;
 import android.net.Uri;

@@ -2,6 +2,7 @@ package com.kirich74.questsapp.createquest;
 
 import com.kirich74.questsapp.R;
 import com.kirich74.questsapp.data.ImageUtils;
+import com.kirich74.questsapp.data.Quest;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -150,7 +151,7 @@ public class ItemsRecyclerViewAdapter
                 : mQuest.size() + 2;
     }
 
-    public void removeItem(int position){
+    public void removeItem(int position) {
 
         notifyItemRemoved(position);
     }
@@ -164,7 +165,7 @@ public class ItemsRecyclerViewAdapter
         } else {
             mQuest.editImageItem(selectedStep, mUri != null ? mUri.toString() : null);
         }
-            notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     public class addButtonsViewHolder extends RecyclerView.ViewHolder {
@@ -218,8 +219,8 @@ public class ItemsRecyclerViewAdapter
             super(itemView);
             mImageDescription = (ImageView) itemView.findViewById(R.id.image_description_create);
             mChoosePhotoButton = (Button) itemView.findViewById(R.id.choose_photo_button);
-            mName = (EditText) itemView.findViewById(R.id.quest_title_edit_text);
-            mDescription = (EditText) itemView.findViewById(R.id.quest_description_edit_text);
+            mName = (EditText) itemView.findViewById(R.id.quest_title_create_text);
+            mDescription = (EditText) itemView.findViewById(R.id.quest_description_create_text);
             mNameListener = nameListener;
             mDescriptionListener = descriptionListener;
             mName.addTextChangedListener(mNameListener);
@@ -312,9 +313,13 @@ public class ItemsRecyclerViewAdapter
                 }
             });
 
-            Picasso.with(mContext)
-                    .load(mQuest.getImageUri(getAdapterPosition())).resize(viewWidth, viewWidth)
-                    .centerCrop().into(mImageView);
+            String imagePath = mQuest.getImageUri(getAdapterPosition()).toString();
+
+            if (!imagePath.isEmpty()) {
+                Picasso.with(mContext)
+                        .load(imagePath).resize(viewWidth, viewWidth)
+                        .centerCrop().into(mImageView);
+            }
         }
     }
 

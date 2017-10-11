@@ -21,7 +21,7 @@ public class QuestDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(final SQLiteDatabase db) {
-        String SQL_CREATE_PETS_TABLE =  "CREATE TABLE " + QuestEntry.TABLE_NAME + " ("
+        String SQL_CREATE_QUESTS_TABLE =  "CREATE TABLE " + QuestEntry.TABLE_NAME + " ("
                 + QuestEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + QuestEntry.COLUMN_QUEST_NAME + " TEXT NOT NULL, "
                 + QuestEntry.COLUMN_QUEST_AUTHOR + " TEXT NOT NULL, "
@@ -30,7 +30,7 @@ public class QuestDbHelper extends SQLiteOpenHelper {
                 + QuestEntry.COLUMN_QUEST_ACCESS + " INTEGER NOT NULL, "
                 + QuestEntry.COLUMN_QUEST_DESCRIPTION + " TEXT);";
 
-        db.execSQL(SQL_CREATE_PETS_TABLE);
+        db.execSQL(SQL_CREATE_QUESTS_TABLE);
     }
 
     @Override

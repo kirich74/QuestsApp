@@ -21,6 +21,9 @@
         <activity
             android:name=".createquest.CreateQuestActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".playquest.PlayQuestActivity"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name=".data.QuestProvider"

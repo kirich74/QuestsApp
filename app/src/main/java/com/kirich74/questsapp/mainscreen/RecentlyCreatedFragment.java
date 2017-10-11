@@ -49,8 +49,6 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
 
     private Toolbar mToolbar;
 
-    private MenuItem deleteItemsMenu;
-
     public static RecentlyCreatedFragment newInstance(int page) {
         RecentlyCreatedFragment fragment = new RecentlyCreatedFragment();
 
@@ -72,8 +70,6 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recently_created, container, false);
-        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
 
 
         mFAB = (FloatingActionButton) view.findViewById(R.id.create_new_quest_fab);
@@ -100,6 +96,10 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
         Uri currentQuestUri = ContentUris.withAppendedId(QuestEntry.CONTENT_URI, id);
         intent.setData(currentQuestUri);
         startActivity(intent);
+    }
+
+    public void dataChanged(){
+        mCursorAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -146,7 +146,7 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
                 projection,             // Columns to include in the resulting Cursor
                 null,                   // No selection clause
                 null,                   // No selection arguments
-                null);                  // Default sort order
+                QuestEntry._ID + " DESC");                  // Default sort order
     }
 
     @Override
