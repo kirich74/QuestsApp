@@ -16,9 +16,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Kirill Pilipenko on 12.07.2017.
  */
@@ -77,7 +74,7 @@ public class QuestsRecyclerViewAdapter
 
         private ImageView imageDescription;
 
-        private Button startOrCreateButton;
+        private Button actionButton;
 
         private ImageButton deleteButton;
 
@@ -87,7 +84,7 @@ public class QuestsRecyclerViewAdapter
             author = (TextView) itemView.findViewById(R.id.quest_author_text_view);
             description = (TextView) itemView.findViewById(R.id.quest_description_text_view);
             imageDescription = (ImageView) itemView.findViewById(R.id.image_description);
-            startOrCreateButton = (Button) itemView.findViewById(R.id.quest_start_or_edit_button);
+            actionButton = (Button) itemView.findViewById(R.id.quest_action_button);
             deleteButton = (ImageButton) itemView.findViewById(R.id.quest_delete_button);
         }
 
@@ -106,11 +103,11 @@ public class QuestsRecyclerViewAdapter
                             QuestContract.QuestEntry.COLUMN_QUEST_DESCRIPTION)));
             author.setText(cursor.getString(
                     cursor.getColumnIndexOrThrow(QuestContract.QuestEntry.COLUMN_QUEST_AUTHOR)));
-            startOrCreateButton.setText(mOnQuestActionListener.getButtonTitle());
-            startOrCreateButton.setOnClickListener(new View.OnClickListener() {
+            actionButton.setText(mOnQuestActionListener.getButtonTitle());
+            actionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    mOnQuestActionListener.startOrEdit(id);
+                    mOnQuestActionListener.action(id);
                 }
             });
             deleteButton.setOnClickListener(new View.OnClickListener() {

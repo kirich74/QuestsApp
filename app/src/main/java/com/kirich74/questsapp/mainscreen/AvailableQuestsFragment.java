@@ -1,7 +1,9 @@
 package com.kirich74.questsapp.mainscreen;
 
 import com.kirich74.questsapp.R;
-import com.kirich74.questsapp.createquest.CreateQuestActivity;
+import com.kirich74.questsapp.cloudclient.CloudClient;
+import com.kirich74.questsapp.cloudclient.ICloudClient;
+import com.kirich74.questsapp.cloudclient.models.AvailableForMe;
 import com.kirich74.questsapp.data.QuestContract;
 import com.kirich74.questsapp.playquest.PlayQuestActivity;
 
@@ -18,17 +20,28 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.Spinner;
 
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static com.kirich74.questsapp.cloudclient.Constants.GET_AVAILABLE_QUESTS;
 import static com.kirich74.questsapp.data.QuestContract.QuestEntry._ID;
 
 /**
- * Created by Kirill Pilipenko on 03.07.2017.
+ * Created by Kirill Pilipenko on 20.10.2017.
  */
 
-public class RecentlyPlayedFragment extends android.support.v4.app.Fragment
+public class AvailableQuestsFragment extends android.support.v4.app.Fragment
         implements onQuestActionListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    public static final String TAG = "RecentlyPlayedFragment";
+    public static final String TAG = "AvailableQuestsFragment";
 
     private static final int QUEST_LOADER = 0;
 
@@ -36,12 +49,16 @@ public class RecentlyPlayedFragment extends android.support.v4.app.Fragment
 
     private int mPage;
 
+    private static ICloudClient mICloudClient;
+
     private RecyclerView questsRecyclerView;
 
     private Toolbar mToolbar;
 
-    public static RecentlyPlayedFragment newInstance(int page) {
-        RecentlyPlayedFragment fragment = new RecentlyPlayedFragment();
+    private boolean availableOnlyForMe = true;
+
+    public static AvailableQuestsFragment newInstance(int page) {
+        AvailableQuestsFragment fragment = new AvailableQuestsFragment();
 
         Bundle args = new Bundle();
         args.putInt("page", page);
@@ -58,8 +75,33 @@ public class RecentlyPlayedFragment extends android.support.v4.app.Fragment
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_recently_played, container, false);
-        questsRecyclerView = (RecyclerView) view.findViewById(R.id.recently_played_recycler_view);
+        View view = inflater.inflate(R.layout.fragment_available_quests, container, false);
+        Spinner spinner = (Spinner) view.findViewById(R.id.available_spinner);
+        mICloudClient = CloudClient.getApi();
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(final AdapterView<?> parent, final View view,
+                    final int position, final long id) {
+                if (position == 0) {
+                    availableOnlyForMe = true;
+                } else {
+                    availableOnlyForMe = false;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(final AdapterView<?> parent) {
+
+            }
+        });
+        ImageButton refresh_button = (ImageButton) view.findViewById(R.id.refresh_button);
+        refresh_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                refresh(availableOnlyForMe);
+            }
+        });
+        questsRecyclerView = (RecyclerView) view.findViewById(R.id.available_quests_recycler_view);
         questsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mCursorAdapter = new QuestsRecyclerViewAdapter(this, getContext(), null);
         questsRecyclerView.setAdapter(mCursorAdapter);
@@ -68,6 +110,26 @@ public class RecentlyPlayedFragment extends android.support.v4.app.Fragment
         return view;
     }
 
+    public void refresh (boolean isAvailableOnlyForMe){
+        if (isAvailableOnlyForMe){
+            mICloudClient.getAvailableForMeQuests(GET_AVAILABLE_QUESTS, "kirich74@gmail.com").enqueue(
+                    new Callback<List<AvailableForMe>>() {
+                        @Override
+                        public void onResponse(final Call<List<AvailableForMe>> call,
+                                final Response<List<AvailableForMe>> response) {
+                            for (AvailableForMe item : response.body()){
+
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(final Call<List<AvailableForMe>> call, final Throwable t) {
+
+                        }
+                    }); //TODO email
+
+        }
+    }
 
     @Override
     public void action(final int id) {
@@ -136,4 +198,3 @@ public class RecentlyPlayedFragment extends android.support.v4.app.Fragment
         mCursorAdapter.notifyDataSetChanged();
     }
 }
-

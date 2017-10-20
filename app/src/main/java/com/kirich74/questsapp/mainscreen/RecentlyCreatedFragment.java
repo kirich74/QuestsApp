@@ -91,7 +91,7 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
     }
 
     @Override
-    public void startOrEdit(final int id) {
+    public void action(final int id) {
         Intent intent = new Intent(getContext(), CreateQuestActivity.class);
         Uri currentQuestUri = ContentUris.withAppendedId(QuestEntry.CONTENT_URI, id);
         intent.setData(currentQuestUri);
