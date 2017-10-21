@@ -1,7 +1,7 @@
 package com.kirich74.questsapp.cloudclient;
 
-import com.kirich74.questsapp.cloudclient.models.AvailableForAll;
-import com.kirich74.questsapp.cloudclient.models.AvailableForMe;
+import com.kirich74.questsapp.cloudclient.models.AvailableQuest;
+import com.kirich74.questsapp.cloudclient.models.Delete;
 
 import java.util.List;
 
@@ -16,10 +16,14 @@ import retrofit2.http.Query;
 public interface ICloudClient {
 
     @GET("quests_api/index.php")
-    Call<List<AvailableForAll>> getAllAvailableQuests(@Query("action") String action);
+    Call<List<AvailableQuest>> getAllAvailableQuests(@Query("action") String action);
 
     @GET("quests_api/index.php")
-    Call<List<AvailableForMe>> getAvailableForMeQuests(@Query("action") String action,
+    Call<List<AvailableQuest>> getAvailableForMeQuests(@Query("action") String action,
             @Query("email") String email);
+
+    @GET("quests_api/index.php")
+    Call<Delete> deleteAccess(@Query("action") String action,
+            @Query("email") String email, @Query("id") int id);
 
 }

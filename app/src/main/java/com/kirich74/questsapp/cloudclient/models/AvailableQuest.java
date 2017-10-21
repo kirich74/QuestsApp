@@ -3,11 +3,11 @@ package com.kirich74.questsapp.cloudclient.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class AvailableForAll {
+public class AvailableQuest {
 
     @SerializedName("id")
     @Expose
-    private String id;
+    private int id;
     @SerializedName("name")
     @Expose
     private String name;
@@ -26,15 +26,12 @@ public class AvailableForAll {
     @SerializedName("public")
     @Expose
     private String _public;
-    @SerializedName("date")
-    @Expose
-    private String date;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -84,14 +81,6 @@ public class AvailableForAll {
 
     public void setPublic(String _public) {
         this._public = _public;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
 }

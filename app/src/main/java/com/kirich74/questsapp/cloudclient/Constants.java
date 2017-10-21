@@ -6,5 +6,6 @@ package com.kirich74.questsapp.cloudclient;
 
 public class Constants {
     public static final String GET_AVAILABLE_QUESTS = "get_available_quests";
+    public static final String DELETE_ACCESS = "delete_access";
 
 }
