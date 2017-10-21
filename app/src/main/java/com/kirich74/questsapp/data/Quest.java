@@ -34,21 +34,25 @@ public class Quest {
 
     public int mAccess;
 
+    public int mGlobalId;
+
     public Quest() {
         quest = new ArrayList<>();
         mName = "";
         mDescription = "";
         mMainImageUri = "";
-        mAccess = 0;
+        mAccess = 1;
+        mGlobalId = 0;
     }
 
     public Quest(final String name, final String description, final String mainImageUri,
-            final int access, final String questInString) {
+            final int access, final String questInString, final int globalId) {
         try {
             mName = name;
             mDescription = description;
             mMainImageUri = mainImageUri;
             mAccess = access;
+            mGlobalId = globalId;
             JSONArray questJsonArray = new JSONArray(questInString);
             quest = new ArrayList<>();
             for (int i = 0; i < questJsonArray.length(); i++) {
@@ -57,6 +61,14 @@ public class Quest {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public int getGlobalId() {
+        return mGlobalId;
+    }
+
+    public void setGlobalId(final int globalId) {
+        mGlobalId = globalId;
     }
 
     public void addTextItem() {

@@ -81,6 +81,7 @@ public final class QuestContract {
          * Type: INTEGER
          */
         public final static String COLUMN_QUEST_ACCESS = "access";
+        public final static String COLUMN_QUEST_GLOBAL_ID = "global_id";
 
 
         /**

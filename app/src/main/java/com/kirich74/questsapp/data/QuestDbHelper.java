@@ -23,6 +23,7 @@ public class QuestDbHelper extends SQLiteOpenHelper {
     public void onCreate(final SQLiteDatabase db) {
         String SQL_CREATE_QUESTS_TABLE =  "CREATE TABLE " + QuestEntry.TABLE_NAME + " ("
                 + QuestEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + QuestEntry.COLUMN_QUEST_GLOBAL_ID + " INTEGER, "
                 + QuestEntry.COLUMN_QUEST_NAME + " TEXT NOT NULL, "
                 + QuestEntry.COLUMN_QUEST_AUTHOR + " TEXT NOT NULL, "
                 + QuestEntry.COLUMN_QUEST_IMAGE + " TEXT, "

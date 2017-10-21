@@ -106,7 +106,8 @@ public class CreateQuestActivity extends MvpActivity
                 QuestEntry.COLUMN_QUEST_DESCRIPTION,
                 QuestEntry.COLUMN_QUEST_ACCESS,
                 QuestEntry.COLUMN_QUEST_IMAGE,
-                QuestEntry.COLUMN_QUEST_DATA_JSON};
+                QuestEntry.COLUMN_QUEST_DATA_JSON,
+                QuestEntry.COLUMN_QUEST_GLOBAL_ID};
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context
@@ -136,9 +137,10 @@ public class CreateQuestActivity extends MvpActivity
             String imageUri = cursor
                     .getString(cursor.getColumnIndex(QuestEntry.COLUMN_QUEST_IMAGE));
             int access = cursor.getInt(cursor.getColumnIndex(QuestEntry.COLUMN_QUEST_ACCESS));
+            int globalId = cursor.getInt(cursor.getColumnIndex(QuestEntry.COLUMN_QUEST_GLOBAL_ID));
 
             mCreateQuestPresenter
-                    .setQuest(mCurrentQuestUri, name, description, imageUri, dataJson, access);
+                    .setQuest(mCurrentQuestUri, name, description, imageUri, dataJson, access, globalId);
         }
     }
 
