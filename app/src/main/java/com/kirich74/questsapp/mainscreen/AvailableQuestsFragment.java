@@ -4,12 +4,10 @@ import com.kirich74.questsapp.R;
 import com.kirich74.questsapp.cloudclient.CloudClient;
 import com.kirich74.questsapp.cloudclient.ICloudClient;
 import com.kirich74.questsapp.cloudclient.models.AvailableQuest;
-import com.kirich74.questsapp.cloudclient.models.Delete;
+import com.kirich74.questsapp.cloudclient.models.DeleteUpdate;
 import com.kirich74.questsapp.data.QuestContract;
-import com.kirich74.questsapp.playquest.PlayQuestActivity;
 
-import android.content.ContentUris;
-import android.content.Intent;
+import android.content.ContentValues;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -116,11 +114,15 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
                                 @Override
                                 public void onResponse(final Call<List<AvailableQuest>> call,
                                         final Response<List<AvailableQuest>> response) {
-                                    List<AvailableQuest> quests = new ArrayList<AvailableQuest>();
-                                    for (AvailableQuest item : response.body()) {
-                                        quests.add(item);
+                                    List<AvailableQuest> quests
+                                            = new ArrayList<AvailableQuest>();
+                                    if (response.body() != null) {
+                                        for (AvailableQuest item : response.body()) {
+                                            quests.add(item);
+                                        }
                                     }
-                                    mQuestsAdapter.setAvailableQuests(quests, isAvailableOnlyForMe);
+                                    mQuestsAdapter
+                                            .setAvailableQuests(quests, isAvailableOnlyForMe);
                                 }
 
                                 @Override
@@ -136,11 +138,15 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
                                 @Override
                                 public void onResponse(final Call<List<AvailableQuest>> call,
                                         final Response<List<AvailableQuest>> response) {
-                                    List<AvailableQuest> quests = new ArrayList<AvailableQuest>();
-                                    for (AvailableQuest item : response.body()) {
-                                        quests.add(item);
+                                    List<AvailableQuest> quests
+                                            = new ArrayList<AvailableQuest>();
+                                    if (response.body() != null) {
+                                        for (AvailableQuest item : response.body()) {
+                                            quests.add(item);
+                                        }
                                     }
-                                    mQuestsAdapter.setAvailableQuests(quests, isAvailableOnlyForMe);
+                                    mQuestsAdapter
+                                            .setAvailableQuests(quests, isAvailableOnlyForMe);
                                 }
 
                                 @Override
@@ -153,8 +159,26 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
     }
 
     @Override
-    public void action(final int id) {
+    public void action(final int position) {
+        AvailableQuest mQuest = mQuestsAdapter.getAvailableQuests().get(position);
+        ContentValues values = new ContentValues();
+        values.put(QuestContract.QuestEntry.COLUMN_QUEST_NAME, mQuest.getName());
+        values.put(QuestContract.QuestEntry.COLUMN_QUEST_DESCRIPTION, mQuest.getDescription());
+        values.put(QuestContract.QuestEntry.COLUMN_QUEST_AUTHOR, mQuest.getEmail());
+        values.put(QuestContract.QuestEntry.COLUMN_QUEST_ACCESS, mQuest.getPublic());
+        values.put(QuestContract.QuestEntry.COLUMN_QUEST_DATA_JSON, mQuest.getDataJson());
+        values.put(QuestContract.QuestEntry.COLUMN_QUEST_IMAGE, mQuest.getImageUri());
+        values.put(QuestContract.QuestEntry.COLUMN_QUEST_GLOBAL_ID, mQuest.getId());
+        Uri newUri = getActivity().getContentResolver().insert(QuestContract.QuestEntry.CONTENT_URI, values);
 
+        // Show a toast message depending on whether or not the insertion was successful.
+        if (newUri == null) {
+            // If the new content URI is null, then there was an error with insertion.
+            //TODO SNACK BAR
+        } else {
+            // Otherwise, the insertion was successful and we can display a toast.
+            //TODO
+        }
     }
 
     @Override
@@ -166,10 +190,10 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
     public void deleteQuest(final int id) {
         mICloudClient.deleteAccess(DELETE_ACCESS, "kirich74@gmail.com", id) //TODO email
                 .enqueue(
-                        new Callback<Delete>() {
+                        new Callback<DeleteUpdate>() {
                             @Override
-                            public void onResponse(final Call<Delete> call,
-                                    final Response<Delete> response) {
+                            public void onResponse(final Call<DeleteUpdate> call,
+                                    final Response<DeleteUpdate> response) {
                                 if (response.body().getResult() == 1) {
                                     Toast.makeText(getContext(), "Access deleted",
                                             Toast.LENGTH_SHORT);
@@ -182,7 +206,7 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
                             }
 
                             @Override
-                            public void onFailure(final Call<Delete> call,
+                            public void onFailure(final Call<DeleteUpdate> call,
                                     final Throwable t) {
                                 Toast.makeText(getContext(), "Server error",
                                         Toast.LENGTH_SHORT);

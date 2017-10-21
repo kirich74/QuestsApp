@@ -3,9 +3,12 @@ package com.kirich74.questsapp.createquest;
 import com.arellomobile.mvp.MvpActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.kirich74.questsapp.R;
+import com.kirich74.questsapp.cloudclient.CloudClient;
+import com.kirich74.questsapp.cloudclient.ICloudClient;
+import com.kirich74.questsapp.cloudclient.models.DeleteUpdate;
+import com.kirich74.questsapp.cloudclient.models.Insert;
 import com.kirich74.questsapp.data.Quest;
 import com.kirich74.questsapp.data.QuestContract.QuestEntry;
-import com.kirich74.questsapp.mainscreen.RecentlyCreatedFragment;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -22,8 +25,16 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.io.IOException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static com.kirich74.questsapp.cloudclient.Constants.INSERT;
+import static com.kirich74.questsapp.cloudclient.Constants.UPDATE;
 
 public class CreateQuestActivity extends MvpActivity
         implements CreateQuestView, android.app.LoaderManager.LoaderCallbacks<Cursor>,
@@ -50,6 +61,8 @@ public class CreateQuestActivity extends MvpActivity
 
     private ItemsRecyclerViewAdapter mAdapter;
 
+    private static ICloudClient mICloudClient;
+
     public static Intent getIntent(final Context context) {
         Intent intent = new Intent(context, CreateQuestActivity.class);
 
@@ -57,7 +70,14 @@ public class CreateQuestActivity extends MvpActivity
     }
 
     @Override
-    public void onSaveQuest(final ContentValues values, final Uri currentQuestUri) {
+    public void onSaveQuest(final Quest mQuest, final Uri currentQuestUri) {
+        final ContentValues values = new ContentValues();
+        values.put(QuestEntry.COLUMN_QUEST_NAME, mQuest.mName);
+        values.put(QuestEntry.COLUMN_QUEST_DESCRIPTION, mQuest.mDescription);
+        values.put(QuestEntry.COLUMN_QUEST_AUTHOR, "kirich74");//TODO make normal view
+        values.put(QuestEntry.COLUMN_QUEST_ACCESS, mQuest.mAccess);
+        values.put(QuestEntry.COLUMN_QUEST_DATA_JSON, mQuest.getQuestJsonArrayString());
+        values.put(QuestEntry.COLUMN_QUEST_IMAGE, mQuest.mMainImageUri);
         if (currentQuestUri == null) {
             // This is a NEW quest, so insert a new quest into the provider,
             // returning the content URI for the new quest.
@@ -66,10 +86,34 @@ public class CreateQuestActivity extends MvpActivity
             // Show a toast message depending on whether or not the insertion was successful.
             if (newUri == null) {
                 // If the new content URI is null, then there was an error with insertion.
-                //TODO SNACK BAR
+                Toast.makeText(this, "Can't save quest", Toast.LENGTH_SHORT).show();
             } else {
-                // Otherwise, the insertion was successful and we can display a toast.
-                //TODO
+                mICloudClient = CloudClient.getApi();
+                mICloudClient.insert(INSERT,
+                        "kirich74@gmail.com", mQuest.mName,mQuest.mDescription,mQuest.mMainImageUri,mQuest.getQuestJsonArrayString(),mQuest.mAccess) //TODO email
+                        .enqueue(
+                                new Callback<Insert>() {
+                                    @Override
+                                    public void onResponse(final Call<Insert> call,
+                                            final Response<Insert> response) {
+                                        if (response.body() != null) {
+                                            values.put(QuestEntry.COLUMN_QUEST_GLOBAL_ID, response.body().getIdentity());
+                                        }
+                                        int rowsAffected = getContentResolver().update(currentQuestUri, values, null, null);
+
+                                        // Show a toast message depending on whether or not the update was successful.
+                                        if (rowsAffected == 0) {
+                                            // If no rows were affected, then there was an error with the update.
+                                            Toast.makeText(getApplication(), "Can't save quest", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(final Call<Insert> call,
+                                            final Throwable t) {
+                                        finish();
+                                    }
+                                });
             }
         } else {
             // Otherwise this is an EXISTING quest, so update the quest with content URI
@@ -81,10 +125,34 @@ public class CreateQuestActivity extends MvpActivity
             // Show a toast message depending on whether or not the update was successful.
             if (rowsAffected == 0) {
                 // If no rows were affected, then there was an error with the update.
-                // TODO
+                Toast.makeText(getApplication(), "Can't save quest", Toast.LENGTH_SHORT).show();
             } else {
-                // Otherwise, the update was successful and we can display a toast.
-                // TODO
+                mICloudClient = CloudClient.getApi();
+                mICloudClient.update(UPDATE,
+                        "kirich74@gmail.com", mQuest.mName, mQuest.mGlobalId, mQuest.mDescription,mQuest.mMainImageUri,mQuest.getQuestJsonArrayString(),mQuest.mAccess) //TODO email
+                        .enqueue(
+                                new Callback<DeleteUpdate>() {
+                                    @Override
+                                    public void onResponse(final Call<DeleteUpdate> call,
+                                            final Response<DeleteUpdate> response) {
+                                        if (response.body() != null && response.body().getResult() == 1) {
+                                            Toast.makeText(getApplication(), "Successful", Toast.LENGTH_SHORT).show();
+                                        }
+                                        int rowsAffected = getContentResolver().update(currentQuestUri, values, null, null);
+
+                                        // Show a toast message depending on whether or not the update was successful.
+                                        if (rowsAffected == 0) {
+                                            // If no rows were affected, then there was an error with the update.
+                                            Toast.makeText(getApplication(), "Can't save quest", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(final Call<DeleteUpdate> call,
+                                            final Throwable t) {
+                                        finish();
+                                    }
+                                });
             }
         }
         finish();

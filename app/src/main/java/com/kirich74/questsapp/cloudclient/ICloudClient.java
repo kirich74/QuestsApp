@@ -1,7 +1,9 @@
 package com.kirich74.questsapp.cloudclient;
 
 import com.kirich74.questsapp.cloudclient.models.AvailableQuest;
-import com.kirich74.questsapp.cloudclient.models.Delete;
+import com.kirich74.questsapp.cloudclient.models.DeleteUpdate;
+import com.kirich74.questsapp.cloudclient.models.Insert;
+import com.kirich74.questsapp.cloudclient.models.Send;
 
 import java.util.List;
 
@@ -23,7 +25,27 @@ public interface ICloudClient {
             @Query("email") String email);
 
     @GET("quests_api/index.php")
-    Call<Delete> deleteAccess(@Query("action") String action,
+    Call<DeleteUpdate> deleteAccess(@Query("action") String action,
             @Query("email") String email, @Query("id") int id);
+
+    @GET("quests_api/index.php")
+    Call<Send> sendAccess(@Query("action") String action,
+            @Query("email") String email, @Query("id") int id);
+
+    @GET("quests_api/index.php")
+    Call<Insert> insert(@Query("action") String action,
+            @Query("email") String email, @Query("name") String name,
+            @Query("description") String description, @Query("image_uri") String image_uri,
+            @Query("data_json") String data_json, @Query("public") int access);
+
+    @GET("quests_api/index.php")
+    Call<DeleteUpdate> delete(@Query("action") String action,
+            @Query("id") int id);
+
+    @GET("quests_api/index.php")
+    Call<DeleteUpdate> update(@Query("action") String action,
+            @Query("email") String email, @Query("name") String name, @Query("id") int id,
+            @Query("description") String description, @Query("image_uri") String image_uri,
+            @Query("data_json") String data_json, @Query("public") int access);
 
 }

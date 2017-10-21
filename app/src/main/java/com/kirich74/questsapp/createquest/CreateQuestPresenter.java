@@ -31,7 +31,6 @@ public class CreateQuestPresenter extends MvpPresenter<CreateQuestView> {
 
 
     public void saveQuest() {
-        String questData = mQuest.getQuestJsonArrayString();
         // Check if this is supposed to be a new quest
         // and check if all the fields in the editor are blank
         if (mCurrentQuestUri == null &&
@@ -43,15 +42,9 @@ public class CreateQuestPresenter extends MvpPresenter<CreateQuestView> {
 
         // Create a ContentValues object where column names are the keys,
         // and quest attributes from the editor are the values.
-        ContentValues values = new ContentValues();
-        values.put(QuestEntry.COLUMN_QUEST_NAME, mQuest.mName);
-        values.put(QuestEntry.COLUMN_QUEST_DESCRIPTION, mQuest.mDescription);
-        values.put(QuestEntry.COLUMN_QUEST_AUTHOR, "kirich74");//TODO make normal view
-        values.put(QuestEntry.COLUMN_QUEST_ACCESS, mQuest.mAccess);
-        values.put(QuestEntry.COLUMN_QUEST_DATA_JSON, questData);
-        values.put(QuestEntry.COLUMN_QUEST_IMAGE, mQuest.mMainImageUri);
 
-        getViewState().onSaveQuest(values, mCurrentQuestUri);
+
+        getViewState().onSaveQuest(mQuest, mCurrentQuestUri);
     }
 
 

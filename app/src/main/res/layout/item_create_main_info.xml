@@ -8,6 +8,10 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <ImageView
             android:id="@+id/image_description_create"
             android:layout_width="match_parent"
@@ -23,10 +27,10 @@
             android:id="@+id/quest_title_create_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/enter_quest_title"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingTop="24dp"
-            android:text="Sample Quest"
             android:textColor="#333"
             android:textSize="24sp" />
 
@@ -34,9 +38,32 @@
             android:id="@+id/quest_description_create_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/enter_quest_description"
             android:padding="16dp"
-            android:paddingBottom="24dp"
-            android:text="here is some description of quest" />
+            android:paddingBottom="24dp" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|left"
+                android:text="@string/available_for_all"
+                android:textColor="#333333"
+                android:textSize="20sp" />
+
+            <CheckBox
+                android:id="@+id/quest_available_for_all_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|right" />
+        </FrameLayout>
+
 
     </LinearLayout>
 </android.support.v7.widget.CardView>

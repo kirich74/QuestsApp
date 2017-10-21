@@ -41,7 +41,7 @@ public class Quest {
         mName = "";
         mDescription = "";
         mMainImageUri = "";
-        mAccess = 1;
+        mAccess = 0;
         mGlobalId = 0;
     }
 

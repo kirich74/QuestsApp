@@ -3,7 +3,7 @@ package com.kirich74.questsapp.cloudclient.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Delete {
+public class DeleteUpdate {
 
     @SerializedName("result")
     @Expose
