@@ -30,6 +30,7 @@ import retrofit2.Response;
 
 import static com.kirich74.questsapp.cloudclient.Constants.DELETE_ACCESS;
 import static com.kirich74.questsapp.cloudclient.Constants.GET_AVAILABLE_QUESTS;
+import static com.kirich74.questsapp.cloudclient.Constants.SHOW_MY_QUESTS;
 
 /**
  * Created by Kirill Pilipenko on 20.10.2017.
@@ -48,9 +49,13 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
 
     private Toolbar mToolbar;
 
-    private boolean availableOnlyForMe = true;
-
     private AvailableQuestsAdapter mQuestsAdapter;
+
+    private enum sType {
+        ForAll,
+        ForMe,
+        My
+    }
 
     public static AvailableQuestsFragment newInstance(int page) {
         AvailableQuestsFragment fragment = new AvailableQuestsFragment();
@@ -72,17 +77,24 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
             final Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_available_quests, container, false);
         Spinner spinner = (Spinner) view.findViewById(R.id.available_spinner);
+        final sType[] type = {sType.ForAll};
         mICloudClient = CloudClient.getApi();
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(final AdapterView<?> parent, final View view,
                     final int position, final long id) {
-                if (position == 0) {
-                    availableOnlyForMe = true;
-                } else {
-                    availableOnlyForMe = false;
+                switch (position) {
+                    case 0:
+                        type[0] = sType.ForAll;
+                        break;
+                    case 1:
+                        type[0] = sType.ForMe;
+                        break;
+                    case 2:
+                        type[0] = sType.My;
+                        break;
                 }
-                refresh(availableOnlyForMe);
+                refresh(type[0]);
             }
 
             @Override
@@ -94,19 +106,19 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
         refresh_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                refresh(availableOnlyForMe);
+                refresh(type[0]);
             }
         });
         questsRecyclerView = (RecyclerView) view.findViewById(R.id.available_quests_recycler_view);
         questsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mQuestsAdapter = new AvailableQuestsAdapter(this, getContext());
         questsRecyclerView.setAdapter(mQuestsAdapter);
-        refresh(availableOnlyForMe);
+        refresh(type[0]);
         return view;
     }
 
-    public void refresh(final boolean isAvailableOnlyForMe) {
-        if (isAvailableOnlyForMe) {
+    public void refresh(final sType type) {
+        if (type == sType.ForMe) {
             mICloudClient.getAvailableForMeQuests(GET_AVAILABLE_QUESTS,
                     "kirich74@gmail.com") //TODO email
                     .enqueue(
@@ -122,7 +134,7 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
                                         }
                                     }
                                     mQuestsAdapter
-                                            .setAvailableQuests(quests, isAvailableOnlyForMe);
+                                            .setAvailableQuests(quests, true);
                                 }
 
                                 @Override
@@ -131,7 +143,7 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
 
                                 }
                             });
-        } else {
+        } else if (type == sType.ForAll) {
             mICloudClient.getAllAvailableQuests(GET_AVAILABLE_QUESTS)
                     .enqueue(
                             new Callback<List<AvailableQuest>>() {
@@ -146,7 +158,32 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
                                         }
                                     }
                                     mQuestsAdapter
-                                            .setAvailableQuests(quests, isAvailableOnlyForMe);
+                                            .setAvailableQuests(quests, false);
+                                }
+
+                                @Override
+                                public void onFailure(final Call<List<AvailableQuest>> call,
+                                        final Throwable t) {
+
+                                }
+                            });
+        } else {
+            mICloudClient.getMyQuests(SHOW_MY_QUESTS,
+                    "kirich74@gmail.com") //TODO email
+                    .enqueue(
+                            new Callback<List<AvailableQuest>>() {
+                                @Override
+                                public void onResponse(final Call<List<AvailableQuest>> call,
+                                        final Response<List<AvailableQuest>> response) {
+                                    List<AvailableQuest> quests
+                                            = new ArrayList<AvailableQuest>();
+                                    if (response.body() != null) {
+                                        for (AvailableQuest item : response.body()) {
+                                            quests.add(item);
+                                        }
+                                    }
+                                    mQuestsAdapter
+                                            .setAvailableQuests(quests, false);
                                 }
 
                                 @Override
@@ -169,7 +206,8 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
         values.put(QuestContract.QuestEntry.COLUMN_QUEST_DATA_JSON, mQuest.getDataJson());
         values.put(QuestContract.QuestEntry.COLUMN_QUEST_IMAGE, mQuest.getImageUri());
         values.put(QuestContract.QuestEntry.COLUMN_QUEST_GLOBAL_ID, mQuest.getId());
-        Uri newUri = getActivity().getContentResolver().insert(QuestContract.QuestEntry.CONTENT_URI, values);
+        Uri newUri = getActivity().getContentResolver()
+                .insert(QuestContract.QuestEntry.CONTENT_URI, values);
 
         // Show a toast message depending on whether or not the insertion was successful.
         if (newUri == null) {
@@ -198,8 +236,7 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
                                     Toast.makeText(getContext(), "Access deleted",
                                             Toast.LENGTH_SHORT);
                                     mQuestsAdapter.notifyDataSetChanged();
-                                }
-                                else {
+                                } else {
                                     Toast.makeText(getContext(), "Can't delete",
                                             Toast.LENGTH_SHORT);
                                 }

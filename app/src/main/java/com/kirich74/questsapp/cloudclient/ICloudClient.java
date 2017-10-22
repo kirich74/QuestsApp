@@ -25,6 +25,10 @@ public interface ICloudClient {
             @Query("email") String email);
 
     @GET("quests_api/index.php")
+    Call<List<AvailableQuest>> getMyQuests(@Query("action") String action,
+            @Query("email") String email);
+
+    @GET("quests_api/index.php")
     Call<DeleteUpdate> deleteAccess(@Query("action") String action,
             @Query("email") String email, @Query("id") int id);
 

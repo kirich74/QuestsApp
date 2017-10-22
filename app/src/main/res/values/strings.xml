@@ -14,7 +14,8 @@
     <string name="enter_quest_description">Enter quest description</string>
 
     <string-array name="available_spinner">
-        <item>For me</item>
-        <item>For all</item>
+        <item>Available for all</item>
+        <item>Available for me</item>
+        <item>My quests</item>
     </string-array>
 </resources>

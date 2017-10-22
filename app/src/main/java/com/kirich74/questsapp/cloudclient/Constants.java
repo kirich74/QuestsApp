@@ -12,5 +12,7 @@ public class Constants {
     public static final String INSERT = "insert";
     public static final String DELETE = "delete";
     public static final String UPDATE = "update";
+    public static final String SHOW_MY_QUESTS = "show_my_quests";
+
 
 }
