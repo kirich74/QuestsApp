@@ -29,11 +29,11 @@ public interface ICloudClient {
             @Query("email") String email, @Query("id") int id);
 
     @GET("quests_api/index.php")
-    Call<Send> sendAccess(@Query("action") String action,
+    Call<List<Send>> sendAccess(@Query("action") String action,
             @Query("email") String email, @Query("id") int id);
 
     @GET("quests_api/index.php")
-    Call<Insert> insert(@Query("action") String action,
+    Call<List<Insert>> insert(@Query("action") String action,
             @Query("email") String email, @Query("name") String name,
             @Query("description") String description, @Query("image_uri") String image_uri,
             @Query("data_json") String data_json, @Query("public") int access);
