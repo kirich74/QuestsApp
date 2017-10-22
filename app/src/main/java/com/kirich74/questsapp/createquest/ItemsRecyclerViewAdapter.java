@@ -20,6 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -118,7 +120,7 @@ public class ItemsRecyclerViewAdapter
                 mainInfoViewHolder mainInfoViewHolder = (mainInfoViewHolder) holder;
                 mainInfoViewHolder.mNameListener.updatePosition(position, NAME);
                 mainInfoViewHolder.mDescriptionListener.updatePosition(position, DESCRIPTION);
-                mainInfoViewHolder.bind(mQuest.mName, mQuest.mDescription);
+                mainInfoViewHolder.bind(mQuest.mName, mQuest.mDescription, mQuest.mAccess);
                 break;
             case IMAGE:
                 ImageViewHolder imageViewHolder = (ImageViewHolder) holder;
@@ -214,6 +216,8 @@ public class ItemsRecyclerViewAdapter
 
         private EditText mName, mDescription;
 
+        private CheckBox mAvailableForAllCheckBox;
+
         mainInfoViewHolder(final View itemView, EditableTextListener nameListener,
                 EditableTextListener descriptionListener) {
             super(itemView);
@@ -221,13 +225,15 @@ public class ItemsRecyclerViewAdapter
             mChoosePhotoButton = (Button) itemView.findViewById(R.id.choose_photo_button);
             mName = (EditText) itemView.findViewById(R.id.quest_title_create_text);
             mDescription = (EditText) itemView.findViewById(R.id.quest_description_create_text);
+            mAvailableForAllCheckBox = (CheckBox) itemView
+                    .findViewById(R.id.quest_available_for_all_checkbox);
             mNameListener = nameListener;
             mDescriptionListener = descriptionListener;
             mName.addTextChangedListener(mNameListener);
             mDescription.addTextChangedListener(mDescriptionListener);
         }
 
-        public void bind(String name, String description) {
+        public void bind(String name, String description, int access) {
             mName.setText(name);
             mDescription.setText(description);
             mChoosePhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -243,7 +249,23 @@ public class ItemsRecyclerViewAdapter
                         .load(mQuest.mMainImageUri).resize(viewWidth, viewWidth).centerCrop()
                         .into(mImageDescription);
             }
-
+            if (access == 1) {
+                mAvailableForAllCheckBox.setChecked(true);
+            } else {
+                mAvailableForAllCheckBox.setChecked(false);
+            }
+            mAvailableForAllCheckBox.setOnCheckedChangeListener(
+                    new CompoundButton.OnCheckedChangeListener() {
+                        @Override
+                        public void onCheckedChanged(final CompoundButton buttonView,
+                                final boolean isChecked) {
+                            if (isChecked) {
+                                mQuest.mAccess = 1;
+                            } else {
+                                mQuest.mAccess = 0;
+                            }
+                        }
+                    });
         }
     }
 
