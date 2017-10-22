@@ -28,16 +28,20 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.kirich74.questsapp.cloudclient.Constants.DELETE;
 import static com.kirich74.questsapp.cloudclient.Constants.DELETE_ACCESS;
 import static com.kirich74.questsapp.cloudclient.Constants.GET_AVAILABLE_QUESTS;
 import static com.kirich74.questsapp.cloudclient.Constants.SHOW_MY_QUESTS;
+import static com.kirich74.questsapp.data.ItemType.AVAILABLE_FOR_ALL;
+import static com.kirich74.questsapp.data.ItemType.AVAILABLE_FOR_ME;
+import static com.kirich74.questsapp.data.ItemType.MY_QUESTS;
 
 /**
  * Created by Kirill Pilipenko on 20.10.2017.
  */
 
 public class AvailableQuestsFragment extends android.support.v4.app.Fragment
-        implements onQuestActionListener {
+        implements onAvailableQuestActionListener {
 
     public static final String TAG = "AvailableQuestsFragment";
 
@@ -51,11 +55,7 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
 
     private AvailableQuestsAdapter mQuestsAdapter;
 
-    private enum sType {
-        ForAll,
-        ForMe,
-        My
-    }
+    private int spinnerPosition = AVAILABLE_FOR_ALL;
 
     public static AvailableQuestsFragment newInstance(int page) {
         AvailableQuestsFragment fragment = new AvailableQuestsFragment();
@@ -77,7 +77,6 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
             final Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_available_quests, container, false);
         Spinner spinner = (Spinner) view.findViewById(R.id.available_spinner);
-        final sType[] type = {sType.ForAll};
         mICloudClient = CloudClient.getApi();
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -85,16 +84,16 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
                     final int position, final long id) {
                 switch (position) {
                     case 0:
-                        type[0] = sType.ForAll;
+                        spinnerPosition = AVAILABLE_FOR_ALL;
                         break;
                     case 1:
-                        type[0] = sType.ForMe;
+                        spinnerPosition = AVAILABLE_FOR_ME;
                         break;
                     case 2:
-                        type[0] = sType.My;
+                        spinnerPosition = MY_QUESTS;
                         break;
                 }
-                refresh(type[0]);
+                refresh(spinnerPosition);
             }
 
             @Override
@@ -106,92 +105,96 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
         refresh_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                refresh(type[0]);
+                refresh(spinnerPosition);
             }
         });
         questsRecyclerView = (RecyclerView) view.findViewById(R.id.available_quests_recycler_view);
         questsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mQuestsAdapter = new AvailableQuestsAdapter(this, getContext());
         questsRecyclerView.setAdapter(mQuestsAdapter);
-        refresh(type[0]);
+        refresh(spinnerPosition);
         return view;
     }
 
-    public void refresh(final sType type) {
-        if (type == sType.ForMe) {
-            mICloudClient.getAvailableForMeQuests(GET_AVAILABLE_QUESTS,
-                    "kirich74@gmail.com") //TODO email
-                    .enqueue(
-                            new Callback<List<AvailableQuest>>() {
-                                @Override
-                                public void onResponse(final Call<List<AvailableQuest>> call,
-                                        final Response<List<AvailableQuest>> response) {
-                                    List<AvailableQuest> quests
-                                            = new ArrayList<AvailableQuest>();
-                                    if (response.body() != null) {
-                                        for (AvailableQuest item : response.body()) {
-                                            quests.add(item);
+    public void refresh(final int spinnerPosition) {
+        switch (spinnerPosition){
+            case AVAILABLE_FOR_ALL:
+                mICloudClient.getAllAvailableQuests(GET_AVAILABLE_QUESTS)
+                        .enqueue(
+                                new Callback<List<AvailableQuest>>() {
+                                    @Override
+                                    public void onResponse(final Call<List<AvailableQuest>> call,
+                                            final Response<List<AvailableQuest>> response) {
+                                        List<AvailableQuest> quests
+                                                = new ArrayList<AvailableQuest>();
+                                        if (response.body() != null) {
+                                            for (AvailableQuest item : response.body()) {
+                                                quests.add(item);
+                                            }
                                         }
+                                        mQuestsAdapter
+                                                .setAvailableQuests(quests, spinnerPosition);
                                     }
-                                    mQuestsAdapter
-                                            .setAvailableQuests(quests, true);
-                                }
 
-                                @Override
-                                public void onFailure(final Call<List<AvailableQuest>> call,
-                                        final Throwable t) {
+                                    @Override
+                                    public void onFailure(final Call<List<AvailableQuest>> call,
+                                            final Throwable t) {
 
-                                }
-                            });
-        } else if (type == sType.ForAll) {
-            mICloudClient.getAllAvailableQuests(GET_AVAILABLE_QUESTS)
-                    .enqueue(
-                            new Callback<List<AvailableQuest>>() {
-                                @Override
-                                public void onResponse(final Call<List<AvailableQuest>> call,
-                                        final Response<List<AvailableQuest>> response) {
-                                    List<AvailableQuest> quests
-                                            = new ArrayList<AvailableQuest>();
-                                    if (response.body() != null) {
-                                        for (AvailableQuest item : response.body()) {
-                                            quests.add(item);
+                                    }
+                                });
+                break;
+            case AVAILABLE_FOR_ME:
+                mICloudClient.getAvailableForMeQuests(GET_AVAILABLE_QUESTS,
+                        "kirich74@gmail.com") //TODO email
+                        .enqueue(
+                                new Callback<List<AvailableQuest>>() {
+                                    @Override
+                                    public void onResponse(final Call<List<AvailableQuest>> call,
+                                            final Response<List<AvailableQuest>> response) {
+                                        List<AvailableQuest> quests
+                                                = new ArrayList<AvailableQuest>();
+                                        if (response.body() != null) {
+                                            for (AvailableQuest item : response.body()) {
+                                                quests.add(item);
+                                            }
                                         }
+                                        mQuestsAdapter
+                                                .setAvailableQuests(quests, spinnerPosition);
                                     }
-                                    mQuestsAdapter
-                                            .setAvailableQuests(quests, false);
-                                }
 
-                                @Override
-                                public void onFailure(final Call<List<AvailableQuest>> call,
-                                        final Throwable t) {
+                                    @Override
+                                    public void onFailure(final Call<List<AvailableQuest>> call,
+                                            final Throwable t) {
 
-                                }
-                            });
-        } else {
-            mICloudClient.getMyQuests(SHOW_MY_QUESTS,
-                    "kirich74@gmail.com") //TODO email
-                    .enqueue(
-                            new Callback<List<AvailableQuest>>() {
-                                @Override
-                                public void onResponse(final Call<List<AvailableQuest>> call,
-                                        final Response<List<AvailableQuest>> response) {
-                                    List<AvailableQuest> quests
-                                            = new ArrayList<AvailableQuest>();
-                                    if (response.body() != null) {
-                                        for (AvailableQuest item : response.body()) {
-                                            quests.add(item);
+                                    }
+                                });
+                break;
+            case MY_QUESTS:
+                mICloudClient.getMyQuests(SHOW_MY_QUESTS,
+                        "kirich74@gmail.com") //TODO email
+                        .enqueue(
+                                new Callback<List<AvailableQuest>>() {
+                                    @Override
+                                    public void onResponse(final Call<List<AvailableQuest>> call,
+                                            final Response<List<AvailableQuest>> response) {
+                                        List<AvailableQuest> quests
+                                                = new ArrayList<AvailableQuest>();
+                                        if (response.body() != null) {
+                                            for (AvailableQuest item : response.body()) {
+                                                quests.add(item);
+                                            }
                                         }
+                                        mQuestsAdapter
+                                                .setAvailableQuests(quests, spinnerPosition);
                                     }
-                                    mQuestsAdapter
-                                            .setAvailableQuests(quests, false);
-                                }
 
-                                @Override
-                                public void onFailure(final Call<List<AvailableQuest>> call,
-                                        final Throwable t) {
+                                    @Override
+                                    public void onFailure(final Call<List<AvailableQuest>> call,
+                                            final Throwable t) {
 
-                                }
-                            });
+                                    }
+                                });
+                break;
         }
     }
 
@@ -226,18 +229,18 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
 
     @Override
     public void deleteQuest(final int id) {
-        mICloudClient.deleteAccess(DELETE_ACCESS, "kirich74@gmail.com", id) //TODO email
+        mICloudClient.delete(DELETE, id)
                 .enqueue(
                         new Callback<DeleteUpdate>() {
                             @Override
                             public void onResponse(final Call<DeleteUpdate> call,
                                     final Response<DeleteUpdate> response) {
                                 if (response.body().getResult() == 1) {
-                                    Toast.makeText(getContext(), "Access deleted",
+                                    Toast.makeText(getActivity(), "Deleted",
                                             Toast.LENGTH_SHORT);
-                                    mQuestsAdapter.notifyDataSetChanged();
+                                    refresh(spinnerPosition);
                                 } else {
-                                    Toast.makeText(getContext(), "Can't delete",
+                                    Toast.makeText(getActivity(), "Can't delete",
                                             Toast.LENGTH_SHORT);
                                 }
                             }
@@ -245,7 +248,35 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
                             @Override
                             public void onFailure(final Call<DeleteUpdate> call,
                                     final Throwable t) {
-                                Toast.makeText(getContext(), "Server error",
+                                Toast.makeText(getActivity(), "Server error",
+                                        Toast.LENGTH_SHORT);
+                            }
+                        });
+
+    }
+
+    @Override
+    public void deleteAccess(final int id) {
+        mICloudClient.deleteAccess(DELETE_ACCESS, "kirich74@gmail.com", id) //TODO email
+                .enqueue(
+                        new Callback<DeleteUpdate>() {
+                            @Override
+                            public void onResponse(final Call<DeleteUpdate> call,
+                                    final Response<DeleteUpdate> response) {
+                                if (response.body().getResult() == 1) {
+                                    Toast.makeText(getActivity(), "Access deleted",
+                                            Toast.LENGTH_SHORT);
+                                    refresh(spinnerPosition);
+                                } else {
+                                    Toast.makeText(getActivity(), "Can't delete",
+                                            Toast.LENGTH_SHORT);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(final Call<DeleteUpdate> call,
+                                    final Throwable t) {
+                                Toast.makeText(getActivity(), "Server error",
                                         Toast.LENGTH_SHORT);
                             }
                         });

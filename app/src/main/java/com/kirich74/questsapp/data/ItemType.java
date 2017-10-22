@@ -22,6 +22,12 @@ public class ItemType {
     public static final String TEXT_ = "text";
     public static final String TEXT_ANSWER_ = "text answer";
     public static final String IMAGE_ = "image";
+
+
+    public static final int AVAILABLE_FOR_ALL = 0;
+    public static final int AVAILABLE_FOR_ME = 1;
+    public static final int MY_QUESTS = 2;
+
     private ItemType() {
     }
 }

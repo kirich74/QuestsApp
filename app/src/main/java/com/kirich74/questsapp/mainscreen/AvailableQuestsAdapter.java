@@ -18,6 +18,10 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import static com.kirich74.questsapp.data.ItemType.AVAILABLE_FOR_ALL;
+import static com.kirich74.questsapp.data.ItemType.AVAILABLE_FOR_ME;
+import static com.kirich74.questsapp.data.ItemType.MY_QUESTS;
+
 /**
  * Created by Kirill Pilipenko on 21.10.2017.
  */
@@ -29,14 +33,15 @@ public class AvailableQuestsAdapter
 
     private List<AvailableQuest> mAvailableQuests;
 
-    private onQuestActionListener mOnQuestActionListener;
+    private onAvailableQuestActionListener mOnAvailableQuestActionListener;
 
     private Context mContext;
 
-    private boolean isAvailableForMe;
+    private int spinnerPosition;
 
-    public AvailableQuestsAdapter(onQuestActionListener onQuestActionListener, Context context) {
-        mOnQuestActionListener = onQuestActionListener;
+    public AvailableQuestsAdapter(onAvailableQuestActionListener onAvailableQuestActionListener,
+            Context context) {
+        mOnAvailableQuestActionListener = onAvailableQuestActionListener;
         mContext = context;
         WindowManager windowManager = (WindowManager) mContext
                 .getSystemService(Context.WINDOW_SERVICE);
@@ -52,9 +57,9 @@ public class AvailableQuestsAdapter
     }
 
     public void setAvailableQuests(@NonNull final List<AvailableQuest> quests,
-            boolean isAvailableForMe) {
+            int spinnerPosition) {
         mAvailableQuests = quests;
-        this.isAvailableForMe = isAvailableForMe;
+        this.spinnerPosition = spinnerPosition;
         notifyDataSetChanged();
     }
 
@@ -113,22 +118,35 @@ public class AvailableQuestsAdapter
             }
             description.setText(quest.getDescription());
             author.setText(quest.getEmail());
-            actionButton.setText(mOnQuestActionListener.getButtonTitle());
+            actionButton.setText(mOnAvailableQuestActionListener.getButtonTitle());
             actionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    mOnQuestActionListener.action(getAdapterPosition());
+                    mOnAvailableQuestActionListener.action(getAdapterPosition());
                 }
             });
-            if (isAvailableForMe) {
-                deleteButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
-                        mOnQuestActionListener.deleteQuest(id);
-                    }
-                });
-            } else {
-                deleteButton.setVisibility(View.INVISIBLE);
+            switch (spinnerPosition){
+                case AVAILABLE_FOR_ME:
+                    deleteButton.setVisibility(View.VISIBLE);
+                    deleteButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(final View v) {
+                            mOnAvailableQuestActionListener.deleteAccess(id);
+                        }
+                    });
+                    break;
+                case AVAILABLE_FOR_ALL:
+                    deleteButton.setVisibility(View.INVISIBLE);
+                    break;
+                case MY_QUESTS:
+                    deleteButton.setVisibility(View.VISIBLE);
+                    deleteButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(final View v) {
+                            mOnAvailableQuestActionListener.deleteQuest(id);
+                        }
+                    });
+                    break;
             }
         }
     }
