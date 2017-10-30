@@ -118,11 +118,11 @@ public class AvailableQuestsAdapter
             }
             description.setText(quest.getDescription());
             author.setText(quest.getEmail());
-            actionButton.setText(mOnAvailableQuestActionListener.getButtonTitle());
+            actionButton.setText(mOnAvailableQuestActionListener.getButtonTitle(id));
             actionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    mOnAvailableQuestActionListener.action(getAdapterPosition());
+                    mOnAvailableQuestActionListener.download(getAdapterPosition());
                 }
             });
             switch (spinnerPosition){
@@ -143,6 +143,7 @@ public class AvailableQuestsAdapter
                     deleteButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(final View v) {
+                            mOnAvailableQuestActionListener.deleteQuest(id);
                             mOnAvailableQuestActionListener.deleteQuest(id);
                         }
                     });

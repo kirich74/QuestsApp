@@ -18,36 +18,36 @@ import retrofit2.http.Query;
 public interface ICloudClient {
 
     @GET("quests_api/index.php")
-    Call<List<AvailableQuest>> getAllAvailableQuests(@Query("action") String action);
+    Call<List<AvailableQuest>> getAllAvailableQuests(@Query("download") String action);
 
     @GET("quests_api/index.php")
-    Call<List<AvailableQuest>> getAvailableForMeQuests(@Query("action") String action,
+    Call<List<AvailableQuest>> getAvailableForMeQuests(@Query("download") String action,
             @Query("email") String email);
 
     @GET("quests_api/index.php")
-    Call<List<AvailableQuest>> getMyQuests(@Query("action") String action,
+    Call<List<AvailableQuest>> getMyQuests(@Query("download") String action,
             @Query("email") String email);
 
     @GET("quests_api/index.php")
-    Call<DeleteUpdate> deleteAccess(@Query("action") String action,
+    Call<DeleteUpdate> deleteAccess(@Query("download") String action,
             @Query("email") String email, @Query("id") int id);
 
     @GET("quests_api/index.php")
-    Call<List<Send>> sendAccess(@Query("action") String action,
+    Call<List<Send>> sendAccess(@Query("download") String action,
             @Query("email") String email, @Query("id") int id);
 
     @GET("quests_api/index.php")
-    Call<List<Insert>> insert(@Query("action") String action,
+    Call<List<Insert>> insert(@Query("download") String action,
             @Query("email") String email, @Query("name") String name,
             @Query("description") String description, @Query("image_uri") String image_uri,
             @Query("data_json") String data_json, @Query("public") int access);
 
     @GET("quests_api/index.php")
-    Call<DeleteUpdate> delete(@Query("action") String action,
+    Call<DeleteUpdate> delete(@Query("download") String action,
             @Query("id") int id);
 
     @GET("quests_api/index.php")
-    Call<DeleteUpdate> update(@Query("action") String action,
+    Call<DeleteUpdate> update(@Query("download") String action,
             @Query("email") String email, @Query("name") String name, @Query("id") int id,
             @Query("description") String description, @Query("image_uri") String image_uri,
             @Query("data_json") String data_json, @Query("public") int access);

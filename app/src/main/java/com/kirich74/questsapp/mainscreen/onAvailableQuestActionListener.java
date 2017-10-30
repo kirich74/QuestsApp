@@ -5,9 +5,9 @@ package com.kirich74.questsapp.mainscreen;
  */
 
 public interface onAvailableQuestActionListener {
-    void action(int id);
+    void download(int id);
 
-    String getButtonTitle();
+    String getButtonTitle(int id);
 
     void deleteQuest(int id);
 

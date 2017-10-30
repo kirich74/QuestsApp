@@ -1,5 +1,6 @@
 package com.kirich74.questsapp.mainscreen;
 
+import com.kirich74.questsapp.FirstLaunch.PrefManager;
 import com.kirich74.questsapp.R;
 import com.kirich74.questsapp.cloudclient.CloudClient;
 import com.kirich74.questsapp.cloudclient.ICloudClient;
@@ -117,6 +118,7 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
     }
 
     public void refresh(final int spinnerPosition) {
+        PrefManager prefManager = new PrefManager(getActivity());
         switch (spinnerPosition){
             case AVAILABLE_FOR_ALL:
                 mICloudClient.getAllAvailableQuests(GET_AVAILABLE_QUESTS)
@@ -145,7 +147,7 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
                 break;
             case AVAILABLE_FOR_ME:
                 mICloudClient.getAvailableForMeQuests(GET_AVAILABLE_QUESTS,
-                        "kirich74@gmail.com") //TODO email
+                        prefManager.getSavedEmail())
                         .enqueue(
                                 new Callback<List<AvailableQuest>>() {
                                     @Override
@@ -171,7 +173,7 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
                 break;
             case MY_QUESTS:
                 mICloudClient.getMyQuests(SHOW_MY_QUESTS,
-                        "kirich74@gmail.com") //TODO email
+                        prefManager.getSavedEmail())
                         .enqueue(
                                 new Callback<List<AvailableQuest>>() {
                                     @Override
@@ -199,7 +201,7 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
     }
 
     @Override
-    public void action(final int position) {
+    public void download(final int position) {
         AvailableQuest mQuest = mQuestsAdapter.getAvailableQuests().get(position);
         ContentValues values = new ContentValues();
         values.put(QuestContract.QuestEntry.COLUMN_QUEST_NAME, mQuest.getName());
@@ -223,8 +225,8 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
     }
 
     @Override
-    public String getButtonTitle() {
-        return "Download";
+    public String getButtonTitle(int id) {
+        return getString(R.string.download);
     }
 
     @Override
@@ -257,7 +259,8 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
 
     @Override
     public void deleteAccess(final int id) {
-        mICloudClient.deleteAccess(DELETE_ACCESS, "kirich74@gmail.com", id) //TODO email
+        PrefManager prefManager = new PrefManager(getActivity());
+        mICloudClient.deleteAccess(DELETE_ACCESS, prefManager.getSavedEmail(), id)
                 .enqueue(
                         new Callback<DeleteUpdate>() {
                             @Override

@@ -186,21 +186,21 @@ public class ItemsRecyclerViewAdapter
                 @Override
                 public void onClick(final View v) {
                     mQuest.addTextItem();
-                    notifyDataSetChanged();
+                    notifyItemInserted(getAdapterPosition());
                 }
             });
             mAddTextAnswer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
                     mQuest.addTextAnswerItem();
-                    notifyDataSetChanged();
+                    notifyItemInserted(getAdapterPosition());
                 }
             });
             mAddImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
                     mQuest.addImageItem();
-                    notifyDataSetChanged();
+                    notifyItemInserted(getAdapterPosition());
                 }
             });
         }
@@ -285,6 +285,9 @@ public class ItemsRecyclerViewAdapter
         public void bind(@NonNull final JSONObject item) {
             try {
                 mEditText.setText(item.getString(TEXT_));
+                if (getAdapterPosition() == getItemCount() - 2 && mEditText.getText().length() == 0){
+                    mEditText.requestFocus();
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -307,6 +310,9 @@ public class ItemsRecyclerViewAdapter
         public void bind(@NonNull final JSONObject item) {
             try {
                 mEditText.setText(item.getString(TEXT_ANSWER_));
+                if (getAdapterPosition() == getItemCount() - 2 && mEditText.getText().length() == 0){
+                    mEditText.requestFocus();
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -329,11 +335,13 @@ public class ItemsRecyclerViewAdapter
             mSetImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    //TODO
                     selectedStep = getAdapterPosition();
                     mOnItemActionListener.setImage();
                 }
             });
+            if (getAdapterPosition() == getItemCount() - 2){
+                mSetImageButton.requestFocus();
+            }
 
             String imagePath = mQuest.getImageUri(getAdapterPosition()).toString();
 

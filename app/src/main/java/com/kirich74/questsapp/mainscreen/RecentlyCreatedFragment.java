@@ -1,5 +1,6 @@
 package com.kirich74.questsapp.mainscreen;
 
+import com.kirich74.questsapp.FirstLaunch.PrefManager;
 import com.kirich74.questsapp.R;
 import com.kirich74.questsapp.createquest.CreateQuestActivity;
 
@@ -133,13 +134,14 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
                 QuestEntry.COLUMN_QUEST_AUTHOR,
                 QuestEntry.COLUMN_QUEST_IMAGE,
                 QuestEntry.COLUMN_QUEST_DESCRIPTION};
+        PrefManager prefManager = new PrefManager(getActivity());
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new android.support.v4.content.CursorLoader(getContext(),   // Parent activity context
                 QuestEntry.CONTENT_URI,   // Provider content URI to query
                 projection,             // Columns to include in the resulting Cursor
                 QuestEntry.COLUMN_QUEST_AUTHOR + "=?",                   // No selection clause
-                new String[]{"kirich74"},                  // No selection arguments TODO email
+                new String[]{prefManager.getSavedEmail()},                  // No selection arguments
                 QuestEntry._ID + " DESC");                  // Default sort order
     }
 

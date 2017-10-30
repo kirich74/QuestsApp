@@ -2,6 +2,7 @@ package com.kirich74.questsapp.createquest;
 
 import com.arellomobile.mvp.MvpActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.kirich74.questsapp.FirstLaunch.PrefManager;
 import com.kirich74.questsapp.R;
 import com.kirich74.questsapp.cloudclient.CloudClient;
 import com.kirich74.questsapp.cloudclient.ICloudClient;
@@ -72,10 +73,11 @@ public class CreateQuestActivity extends MvpActivity
 
     @Override
     public void onSaveQuest(final Quest mQuest, final Uri currentQuestUri) {
+        PrefManager prefManager = new PrefManager(this);
         final ContentValues values = new ContentValues();
         values.put(QuestEntry.COLUMN_QUEST_NAME, mQuest.mName);
         values.put(QuestEntry.COLUMN_QUEST_DESCRIPTION, mQuest.mDescription);
-        values.put(QuestEntry.COLUMN_QUEST_AUTHOR, "kirich74");//TODO make normal view
+        values.put(QuestEntry.COLUMN_QUEST_AUTHOR, prefManager.getSavedEmail());
         values.put(QuestEntry.COLUMN_QUEST_ACCESS, mQuest.mAccess);
         values.put(QuestEntry.COLUMN_QUEST_DATA_JSON, mQuest.getQuestJsonArrayString());
         values.put(QuestEntry.COLUMN_QUEST_IMAGE, mQuest.mMainImageUri);
@@ -91,9 +93,9 @@ public class CreateQuestActivity extends MvpActivity
             } else {
                 mICloudClient = CloudClient.getApi();
                 mICloudClient.insert(INSERT,
-                        "kirich74@gmail.com", mQuest.mName, mQuest.mDescription,
+                        prefManager.getSavedEmail(), mQuest.mName, mQuest.mDescription,
                         mQuest.mMainImageUri, mQuest.getQuestJsonArrayString(),
-                        mQuest.mAccess) //TODO email
+                        mQuest.mAccess)
                         .enqueue(
                                 new Callback<List<Insert>>() {
                                     @Override
@@ -136,9 +138,9 @@ public class CreateQuestActivity extends MvpActivity
             } else {
                 mICloudClient = CloudClient.getApi();
                 mICloudClient.update(UPDATE,
-                        "kirich74@gmail.com", mQuest.mName, mQuest.mGlobalId, mQuest.mDescription,
+                        prefManager.getSavedEmail(), mQuest.mName, mQuest.mGlobalId, mQuest.mDescription,
                         mQuest.mMainImageUri, mQuest.getQuestJsonArrayString(),
-                        mQuest.mAccess) //TODO email
+                        mQuest.mAccess)
                         .enqueue(
                                 new Callback<DeleteUpdate>() {
                                     @Override
