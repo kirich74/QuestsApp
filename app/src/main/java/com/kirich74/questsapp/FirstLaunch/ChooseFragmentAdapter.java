@@ -28,7 +28,7 @@ public class ChooseFragmentAdapter extends FragmentPagerAdapter {
         public Fragment getItem(final int position) {
             switch (position) {
                 case 0:
-                    //return OverviewFragment1.newInstance(0);
+                    return OverviewFragment1.newInstance(0);
                 default:
                     return null;
             }

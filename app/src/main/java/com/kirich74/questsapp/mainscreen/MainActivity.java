@@ -1,7 +1,11 @@
 package com.kirich74.questsapp.mainscreen;
 
+import com.kirich74.questsapp.FirstLaunch.SignInActivity;
 import com.kirich74.questsapp.R;
+import com.kirich74.questsapp.playquest.PlayQuestActivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
