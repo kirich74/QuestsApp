@@ -1,10 +1,10 @@
 package com.kirich74.questsapp.mainscreen;
 
+import com.kirich74.questsapp.FirstLaunch.PrefManager;
 import com.kirich74.questsapp.R;
 import com.kirich74.questsapp.createquest.CreateQuestActivity;
 
 import android.content.ContentUris;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -12,17 +12,12 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.kirich74.questsapp.data.QuestContract.QuestEntry;
 
@@ -91,7 +86,7 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
     }
 
     @Override
-    public void startOrEdit(final int id) {
+    public void action(final int id) {
         Intent intent = new Intent(getContext(), CreateQuestActivity.class);
         Uri currentQuestUri = ContentUris.withAppendedId(QuestEntry.CONTENT_URI, id);
         intent.setData(currentQuestUri);
@@ -139,13 +134,14 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
                 QuestEntry.COLUMN_QUEST_AUTHOR,
                 QuestEntry.COLUMN_QUEST_IMAGE,
                 QuestEntry.COLUMN_QUEST_DESCRIPTION};
+        PrefManager prefManager = new PrefManager(getActivity());
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new android.support.v4.content.CursorLoader(getContext(),   // Parent activity context
                 QuestEntry.CONTENT_URI,   // Provider content URI to query
                 projection,             // Columns to include in the resulting Cursor
-                null,                   // No selection clause
-                null,                   // No selection arguments
+                QuestEntry.COLUMN_QUEST_AUTHOR + "=?",                   // No selection clause
+                new String[]{prefManager.getSavedEmail()},                  // No selection arguments
                 QuestEntry._ID + " DESC");                  // Default sort order
     }
 

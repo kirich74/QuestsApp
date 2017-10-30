@@ -5,7 +5,7 @@ package com.kirich74.questsapp.mainscreen;
  */
 
 public interface onQuestActionListener {
-    void startOrEdit (int id);
+    void action(int id);
 
     String getButtonTitle ();
 

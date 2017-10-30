@@ -9,7 +9,7 @@ import android.net.Uri;
 public interface CreateQuestView extends MvpView {
 
 
-    void onSaveQuest(ContentValues values, Uri currentQuestUri);
+    void onSaveQuest(Quest quest, Uri currentQuestUri);
 
     void showQuestRecyclerView(Quest quest);
 }

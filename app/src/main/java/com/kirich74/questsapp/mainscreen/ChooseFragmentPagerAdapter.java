@@ -14,7 +14,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class ChooseFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    final int PAGE_COUNT = 2;
+    final int PAGE_COUNT = 3;
 
     private Context context;
 
@@ -29,7 +29,9 @@ public class ChooseFragmentPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return RecentlyPlayedFragment.newInstance(0);
             case 1:
-                return RecentlyCreatedFragment.newInstance(1);
+                return AvailableQuestsFragment.newInstance(1);
+            case 2:
+                return RecentlyCreatedFragment.newInstance(2);
             default:
                 return null;
         }
@@ -46,6 +48,8 @@ public class ChooseFragmentPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return "Recent played";
             case 1:
+                return "Available quests";
+            case 2:
                 return "Recent created";
             default:
                 return null;

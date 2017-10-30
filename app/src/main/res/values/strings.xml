@@ -9,4 +9,14 @@
     <string name="start">Start</string>
     <string name="check">Check</string>
     <string name="finish">Finish</string>
+    <string name="available_for_all">Available for all</string>
+    <string name="enter_quest_title">Enter quest title</string>
+    <string name="enter_quest_description">Enter quest description</string>
+    <string name="download">Download</string>
+
+    <string-array name="available_spinner">
+        <item>Available for all</item>
+        <item>Available for me</item>
+        <item>My quests</item>
+    </string-array>
 </resources>

@@ -40,7 +40,7 @@
             android:padding="8dp">
 
             <Button
-                android:id="@+id/quest_start_or_edit_button"
+                android:id="@+id/quest_action_button"
                 style="@android:style/Widget.Material.Button.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

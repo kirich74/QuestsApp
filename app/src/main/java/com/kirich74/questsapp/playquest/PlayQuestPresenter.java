@@ -20,7 +20,7 @@ public class PlayQuestPresenter extends MvpPresenter<PlayQuestView> {
         if (dataJson == null) {
             mQuest = new Quest();
         } else {
-            mQuest = new Quest(name, description, image, access, dataJson);
+            mQuest = new Quest(name, description, image, access, dataJson, 0);
         }
         mCurrentQuestUri = questUri;
         getViewState().showStepRecyclerView(mQuest, begin, end);

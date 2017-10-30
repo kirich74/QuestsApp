@@ -10,6 +10,7 @@
         <TextView
             android:id="@+id/item_play_text"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:textSize="20sp"/>
     </FrameLayout>
 </android.support.v7.widget.CardView>

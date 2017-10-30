@@ -239,11 +239,11 @@ public class QuestProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case QUESTS:
-                // Delete all rows that match the selection and selection args
+                // DeleteUpdate all rows that match the selection and selection args
                 rowsDeleted = database.delete(QuestEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             case QUEST_ID:
-                // Delete a single row given by the ID in the URI
+                // DeleteUpdate a single row given by the ID in the URI
                 selection = QuestEntry._ID + "=?";
                 selectionArgs = new String[] { String.valueOf(ContentUris.parseId(uri)) };
                 rowsDeleted = database.delete(QuestEntry.TABLE_NAME, selection, selectionArgs);
