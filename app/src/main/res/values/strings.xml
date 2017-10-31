@@ -13,6 +13,7 @@
     <string name="enter_quest_title">Enter quest title</string>
     <string name="enter_quest_description">Enter quest description</string>
     <string name="download">Download</string>
+    <string name="quest_creating">Quest creating</string>
 
     <string-array name="available_spinner">
         <item>Available for all</item>

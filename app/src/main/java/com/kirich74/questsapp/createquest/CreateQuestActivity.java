@@ -26,6 +26,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -282,7 +283,7 @@ public class CreateQuestActivity extends MvpActivity
         mAdapter = new ItemsRecyclerViewAdapter(this, this);
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
 
-        Button button = (Button) findViewById(R.id.save);
+        ImageButton button = (ImageButton) findViewById(R.id.save);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {

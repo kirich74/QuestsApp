@@ -16,6 +16,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class PlayQuestActivity extends MvpActivity
@@ -42,6 +43,8 @@ public class PlayQuestActivity extends MvpActivity
     private LinearLayoutManager mLinearLayoutManager;
 
     private ItemsRecyclerViewAdapter mAdapter;
+
+    private TextView mQuestName;
 
     public static Intent getIntent(final Context context) {
         Intent intent = new Intent(context, PlayQuestActivity.class);
@@ -94,6 +97,7 @@ public class PlayQuestActivity extends MvpActivity
             int access = cursor
                     .getInt(cursor.getColumnIndex(QuestContract.QuestEntry.COLUMN_QUEST_ACCESS));
 
+            mQuestName.setText(name);
             mPlayQuestPresenter
                     .setQuest(mCurrentQuestUri, name, description, imageUri, dataJson, access);
         }
@@ -138,6 +142,7 @@ public class PlayQuestActivity extends MvpActivity
         }
 
         setContentView(R.layout.activity_play_quest);
+        mQuestName = (TextView) findViewById(R.id.quest_name_text_view);
         mRecyclerView = (RecyclerView) findViewById(R.id.play_quest_recycler_view);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mAdapter = new ItemsRecyclerViewAdapter(this, this);
