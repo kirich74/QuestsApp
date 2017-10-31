@@ -45,6 +45,10 @@ public class Quest {
         mGlobalId = 0;
     }
 
+    public void deleteItem (JSONObject item){
+        quest.remove(item);
+    }
+
     public Quest(final String name, final String description, final String mainImageUri,
             final int access, final String questInString, final int globalId) {
         try {

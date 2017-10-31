@@ -124,7 +124,7 @@ public class ItemsRecyclerViewAdapter
                 break;
             case IMAGE:
                 ImageViewHolder imageViewHolder = (ImageViewHolder) holder;
-                imageViewHolder.bind();
+                imageViewHolder.bind(mQuest.getItem(position));
                 break;
         }
     }
@@ -275,11 +275,14 @@ public class ItemsRecyclerViewAdapter
 
         private EditText mEditText;
 
+        private ImageButton mCancelButton;
+
         textViewHolder(final View itemView, EditableTextListener listener) {
             super(itemView);
             mEditText = (EditText) itemView.findViewById(R.id.item_create_text);
             mTextListener = listener;
             mEditText.addTextChangedListener(mTextListener);
+            mCancelButton = (ImageButton) itemView.findViewById(R.id.cancel_action);
         }
 
         public void bind(@NonNull final JSONObject item) {
@@ -291,10 +294,19 @@ public class ItemsRecyclerViewAdapter
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            mCancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    mQuest.deleteItem(item);
+                    notifyItemRemoved(getAdapterPosition());
+                }
+            });
         }
     }
 
     public class textAnswerViewHolder extends RecyclerView.ViewHolder {
+
+        private final ImageButton mCancelButton;
 
         public EditableTextListener mTextAnswerListener;
 
@@ -305,6 +317,7 @@ public class ItemsRecyclerViewAdapter
             mEditText = (EditText) itemView.findViewById(R.id.item_create_text_answer);
             mTextAnswerListener = listener;
             mEditText.addTextChangedListener(listener);
+            mCancelButton = (ImageButton) itemView.findViewById(R.id.cancel_action);
         }
 
         public void bind(@NonNull final JSONObject item) {
@@ -316,10 +329,19 @@ public class ItemsRecyclerViewAdapter
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            mCancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    mQuest.deleteItem(item);
+                    notifyItemRemoved(getAdapterPosition());
+                }
+            });
         }
     }
 
     public class ImageViewHolder extends RecyclerView.ViewHolder {
+
+        private final ImageButton mCancelButton;
 
         private ImageView mImageView;
 
@@ -329,9 +351,10 @@ public class ItemsRecyclerViewAdapter
             super(itemView);
             mImageView = (ImageView) itemView.findViewById(R.id.item_create_image);
             mSetImageButton = (Button) itemView.findViewById(R.id.item_create_choose_photo_button);
+            mCancelButton = (ImageButton) itemView.findViewById(R.id.cancel_action);
         }
 
-        public void bind() {
+        public void bind(@NonNull final JSONObject item) {
             mSetImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
@@ -350,6 +373,13 @@ public class ItemsRecyclerViewAdapter
                         .load(imagePath).resize(viewWidth, viewWidth)
                         .centerCrop().into(mImageView);
             }
+            mCancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    mQuest.deleteItem(item);
+                    notifyItemRemoved(getAdapterPosition());
+                }
+            });
         }
     }
 

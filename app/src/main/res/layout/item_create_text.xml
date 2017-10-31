@@ -2,6 +2,14 @@
 <android.support.v7.widget.CardView style="@style/MyCardViewStyle"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <ImageButton
+        android:id="@+id/cancel_action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|top"
+        android:background="@color/cardview_light_background"
+        android:src="@drawable/ic_close_small" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
