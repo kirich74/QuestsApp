@@ -9,6 +9,7 @@ import com.kirich74.questsapp.cloudclient.models.DeleteUpdate;
 import com.kirich74.questsapp.data.QuestContract;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -119,7 +120,7 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
 
     public void refresh(final int spinnerPosition) {
         PrefManager prefManager = new PrefManager(getActivity());
-        switch (spinnerPosition){
+        switch (spinnerPosition) {
             case AVAILABLE_FOR_ALL:
                 mICloudClient.getAllAvailableQuests(GET_AVAILABLE_QUESTS)
                         .enqueue(
@@ -193,7 +194,8 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
                                     @Override
                                     public void onFailure(final Call<List<AvailableQuest>> call,
                                             final Throwable t) {
-
+                                        Toast.makeText(getActivity(), "Connection error",
+                                                Toast.LENGTH_SHORT);
                                     }
                                 });
                 break;
@@ -211,17 +213,40 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
         values.put(QuestContract.QuestEntry.COLUMN_QUEST_DATA_JSON, mQuest.getDataJson());
         values.put(QuestContract.QuestEntry.COLUMN_QUEST_IMAGE, mQuest.getImageUri());
         values.put(QuestContract.QuestEntry.COLUMN_QUEST_GLOBAL_ID, mQuest.getId());
-        Uri newUri = getActivity().getContentResolver()
-                .insert(QuestContract.QuestEntry.CONTENT_URI, values);
 
-        // Show a toast message depending on whether or not the insertion was successful.
-        if (newUri == null) {
-            // If the new content URI is null, then there was an error with insertion.
-            //TODO SNACK BAR
+        String[] projection = {
+                QuestContract.QuestEntry._ID};
+
+        // This loader will execute the ContentProvider's query method on a background thread
+        Cursor cursor = getActivity().getContentResolver().query(
+                QuestContract.QuestEntry.CONTENT_URI,   // Provider content URI to query
+                projection,             // Columns to include in the resulting Cursor
+                QuestContract.QuestEntry.COLUMN_QUEST_GLOBAL_ID + "=?",
+                // No selection clause
+                new String[]{String.valueOf(mQuest.getId())},
+                // No selection arguments
+                null);                  // Default sort order
+
+        if (cursor == null || cursor.getCount() == 0) {
+            Uri newUri = getActivity().getContentResolver()
+                    .insert(QuestContract.QuestEntry.CONTENT_URI, values);
+
+            // Show a toast message depending on whether or not the insertion was successful.
+            if (newUri == null) {
+                // If the new content URI is null, then there was an error with insertion.
+                Toast.makeText(getActivity(), "Error with insertion", Toast.LENGTH_SHORT).show();
+            } else {
+                // Otherwise, the insertion was successful and we can display a toast.
+                Toast.makeText(getActivity(), "Quest downloaded", Toast.LENGTH_SHORT).show();
+            }
         } else {
-            // Otherwise, the insertion was successful and we can display a toast.
-            //TODO
+            getActivity().getContentResolver().update(QuestContract.QuestEntry.CONTENT_URI, values,
+                    QuestContract.QuestEntry.COLUMN_QUEST_GLOBAL_ID + "=?",
+                    new String[]{String.valueOf(mQuest.getId())});
+            Toast.makeText(getActivity(), "Quest updated", Toast.LENGTH_SHORT).show();
         }
+
+
     }
 
     @Override

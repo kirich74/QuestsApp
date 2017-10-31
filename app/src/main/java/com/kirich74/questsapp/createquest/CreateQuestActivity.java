@@ -137,6 +137,8 @@ public class CreateQuestActivity extends MvpActivity
                                 @Override
                                 public void onFailure(final Call<List<Insert>> call,
                                         final Throwable t) {
+                                    Toast.makeText(getApplication(), "Can't save on server",
+                                            Toast.LENGTH_SHORT).show();
                                     finish();
                                 }
                             });
@@ -153,7 +155,7 @@ public class CreateQuestActivity extends MvpActivity
                                         final Response<DeleteUpdate> response) {
                                     if (response.body() != null
                                             && response.body().getResult() == 1) {
-                                        Toast.makeText(getApplication(), "Successful",
+                                        Toast.makeText(getApplication(), "Successful saved on server",
                                                 Toast.LENGTH_SHORT).show();
                                     }
                                 }
@@ -161,7 +163,7 @@ public class CreateQuestActivity extends MvpActivity
                                 @Override
                                 public void onFailure(final Call<DeleteUpdate> call,
                                         final Throwable t) {
-                                    Toast.makeText(getApplication(), "Server Error",
+                                    Toast.makeText(getApplication(), "Can't save on server",
                                             Toast.LENGTH_SHORT).show();
                                     finish();
                                 }
