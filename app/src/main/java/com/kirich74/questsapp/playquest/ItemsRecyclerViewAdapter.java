@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,6 +32,7 @@ import static com.kirich74.questsapp.data.ItemType.ANSWER;
 import static com.kirich74.questsapp.data.ItemType.IMAGE;
 import static com.kirich74.questsapp.data.ItemType.IMAGE_;
 import static com.kirich74.questsapp.data.ItemType.MAIN_INFO;
+import static com.kirich74.questsapp.data.ItemType.NEXT_STEP;
 import static com.kirich74.questsapp.data.ItemType.QUEST_FINISHED;
 import static com.kirich74.questsapp.data.ItemType.TEXT;
 import static com.kirich74.questsapp.data.ItemType.TEXT_;
@@ -116,31 +118,30 @@ public class ItemsRecyclerViewAdapter
             case TEXT:
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_play_text, viewGroup, false);
-                return new com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.textViewHolder(
-                        view);
+                return new textViewHolder(view);
             case TEXT_ANSWER:
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_play_text_answer, viewGroup, false);
-                return new com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.textAnswerViewHolder(
-                        view);
+                return new textAnswerViewHolder(view);
             case MAIN_INFO:
                 WindowManager windowManager = (WindowManager) mContext
                         .getSystemService(Context.WINDOW_SERVICE);
                 viewWidth = windowManager.getDefaultDisplay().getWidth();
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_play_main_info, viewGroup, false);
-                return new com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.mainInfoViewHolder(
-                        view);
+                return new mainInfoViewHolder(view);
             case IMAGE:
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_play_image, viewGroup, false);
-                return new com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.ImageViewHolder(
-                        view);
+                return new ImageViewHolder(view);
             case QUEST_FINISHED:
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_play_finish, viewGroup, false);
-                return new com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.FinishViewHolder(
-                        view);
+                return new FinishViewHolder(view);
+            case NEXT_STEP:
+                view = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.item_next_step, viewGroup, false);
+                return new NextStepViewHolder(view);
             default:
                 return null;
         }
@@ -150,33 +151,27 @@ public class ItemsRecyclerViewAdapter
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         switch (holder.getItemViewType()) {
             case TEXT:
-                com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.textViewHolder
-                        textViewHolder
-                        = (com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.textViewHolder) holder;
+                textViewHolder textViewHolder = (textViewHolder) holder;
                 textViewHolder.bind(mQuest.getItem(getPositionInQuest(position)));
                 break;
             case TEXT_ANSWER:
-                com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.textAnswerViewHolder
-                        textAnswerViewHolder
-                        = (com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.textAnswerViewHolder) holder;
+                textAnswerViewHolder textAnswerViewHolder= (textAnswerViewHolder) holder;
                 textAnswerViewHolder.bind(mQuest.getItem(getPositionInQuest(position)));
                 break;
             case MAIN_INFO:
-                com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.mainInfoViewHolder
-                        mainInfoViewHolder
-                        = (com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.mainInfoViewHolder) holder;
+                mainInfoViewHolder mainInfoViewHolder = (mainInfoViewHolder) holder;
                 mainInfoViewHolder.bind(mQuest.mName, mQuest.mDescription);
                 break;
             case IMAGE:
-                com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.ImageViewHolder
-                        imageViewHolder
-                        = (com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.ImageViewHolder) holder;
+                ImageViewHolder imageViewHolder = (ImageViewHolder) holder;
                 imageViewHolder.bind(mQuest.getItem(getPositionInQuest(position)));
                 break;
+            case NEXT_STEP:
+                NextStepViewHolder nextStepViewHolder = (NextStepViewHolder) holder;
+                nextStepViewHolder.bind();
+                break;
             case QUEST_FINISHED:
-                com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.FinishViewHolder
-                        finishViewHolder
-                        = (com.kirich74.questsapp.playquest.ItemsRecyclerViewAdapter.FinishViewHolder) holder;
+                FinishViewHolder finishViewHolder = (FinishViewHolder) holder;
                 finishViewHolder.bind();
                 break;
         }
@@ -319,6 +314,29 @@ public class ItemsRecyclerViewAdapter
                 @Override
                 public void onClick(final View v) {
                     mOnItemActionListener.questCompleted();
+                }
+            });
+        }
+    }
+
+    public class NextStepViewHolder extends RecyclerView.ViewHolder {
+
+        private final ImageButton mCancelButton;
+
+        private Button mNextStepButton;
+
+        NextStepViewHolder(final View itemView) {
+            super(itemView);
+            mNextStepButton = itemView.findViewById(R.id.item_next_step_button);
+            mCancelButton = (ImageButton) itemView.findViewById(R.id.cancel_action);
+        }
+
+        public void bind(){
+            mCancelButton.setVisibility(View.INVISIBLE);
+            mNextStepButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View view) {
+                    nextStep();
                 }
             });
         }

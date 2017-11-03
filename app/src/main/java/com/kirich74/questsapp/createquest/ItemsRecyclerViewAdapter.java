@@ -1,5 +1,6 @@
 package com.kirich74.questsapp.createquest;
 
+import com.kirich74.questsapp.FirstLaunch.PrefManager;
 import com.kirich74.questsapp.R;
 import com.kirich74.questsapp.data.ImageUtils;
 import com.kirich74.questsapp.data.Quest;
@@ -31,6 +32,7 @@ import static com.kirich74.questsapp.data.ItemType.DESCRIPTION;
 import static com.kirich74.questsapp.data.ItemType.IMAGE;
 import static com.kirich74.questsapp.data.ItemType.MAIN_INFO;
 import static com.kirich74.questsapp.data.ItemType.NAME;
+import static com.kirich74.questsapp.data.ItemType.NEXT_STEP;
 import static com.kirich74.questsapp.data.ItemType.TEXT;
 import static com.kirich74.questsapp.data.ItemType.TEXT_;
 import static com.kirich74.questsapp.data.ItemType.TEXT_ANSWER;
@@ -94,6 +96,10 @@ public class ItemsRecyclerViewAdapter
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_create_image, viewGroup, false);
                 return new ImageViewHolder(view);
+            case NEXT_STEP:
+                view = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.item_next_step, viewGroup, false);
+                return new NextStepViewHolder(view);
             default:
                 return null;
         }
@@ -125,6 +131,10 @@ public class ItemsRecyclerViewAdapter
             case IMAGE:
                 ImageViewHolder imageViewHolder = (ImageViewHolder) holder;
                 imageViewHolder.bind(mQuest.getItem(position));
+                break;
+            case NEXT_STEP:
+                NextStepViewHolder nextStepViewHolder = (NextStepViewHolder) holder;
+                nextStepViewHolder.bind(mQuest.getItem(position));
                 break;
         }
     }
@@ -159,9 +169,9 @@ public class ItemsRecyclerViewAdapter
     }
 
     public void saveImage(Bitmap bitmap) {
+        PrefManager prefManager = new PrefManager(mContext);
         Uri mUri = ImageUtils
-                .saveBitmapToFile(mContext, bitmap, mQuest.mAuthor,
-                        mQuest.mName, selectedStep);
+                .saveBitmapToFile(mContext, bitmap, mQuest.getGlobalId(), selectedStep);
         if (selectedStep == 0) {
             mQuest.mMainImageUri = mUri.toString();
         } else {
@@ -170,15 +180,20 @@ public class ItemsRecyclerViewAdapter
         notifyDataSetChanged();
     }
 
+    public void setGlobalId(final int globalId) {
+        mQuest.setGlobalId(globalId);
+    }
+
     public class addButtonsViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageButton mAddText, mAddTextAnswer, mAddImage;
+        private Button mAddText, mAddTextAnswer, mAddImage, mAddNext;
 
         addButtonsViewHolder(final View itemView) {
             super(itemView);
-            mAddText = (ImageButton) itemView.findViewById(R.id.add_text_button);
-            mAddTextAnswer = (ImageButton) itemView.findViewById(R.id.add_text_answer_button);
-            mAddImage = (ImageButton) itemView.findViewById(R.id.add_image_button);
+            mAddText = (Button) itemView.findViewById(R.id.add_text_button);
+            mAddTextAnswer = (Button) itemView.findViewById(R.id.add_text_answer_button);
+            mAddImage = (Button) itemView.findViewById(R.id.add_image_button);
+            mAddNext = (Button) itemView.findViewById(R.id.add_simple_answer_button);
         }
 
         public void bind() {
@@ -200,6 +215,13 @@ public class ItemsRecyclerViewAdapter
                 @Override
                 public void onClick(final View v) {
                     mQuest.addImageItem();
+                    notifyItemInserted(getAdapterPosition());
+                }
+            });
+            mAddNext.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View view) {
+                    mQuest.addNextItem();
                     notifyItemInserted(getAdapterPosition());
                 }
             });
@@ -266,6 +288,30 @@ public class ItemsRecyclerViewAdapter
                             }
                         }
                     });
+        }
+    }
+
+    public class NextStepViewHolder extends RecyclerView.ViewHolder {
+
+        private final ImageButton mCancelButton;
+
+        private Button mNextStepButton;
+
+        NextStepViewHolder(final View itemView) {
+            super(itemView);
+            mNextStepButton = itemView.findViewById(R.id.item_next_step_button);
+            mCancelButton = (ImageButton) itemView.findViewById(R.id.cancel_action);
+        }
+
+        public void bind(@NonNull final JSONObject item) {
+
+            mCancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    mQuest.deleteItem(item);
+                    notifyItemRemoved(getAdapterPosition());
+                }
+            });
         }
     }
 

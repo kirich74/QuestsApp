@@ -123,6 +123,8 @@ public class CreateQuestActivity extends MvpActivity
                                     if (response.body() != null) {
                                         values.put(QuestEntry.COLUMN_QUEST_GLOBAL_ID,
                                                 response.body().get(0).getIdentity());
+                                        mAdapter.setGlobalId(Integer.parseInt(
+                                                response.body().get(0).getIdentity()));
                                         int rowsAffected = getContentResolver()
                                                 .update(newUri, values, null, null);
 
@@ -169,8 +171,9 @@ public class CreateQuestActivity extends MvpActivity
                                     finish();
                                 }
                             });
+            finish();
         }
-        finish();
+
     }
 
     @Override

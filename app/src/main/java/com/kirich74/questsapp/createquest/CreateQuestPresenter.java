@@ -3,9 +3,7 @@ package com.kirich74.questsapp.createquest;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.kirich74.questsapp.data.Quest;
-import com.kirich74.questsapp.data.QuestContract.QuestEntry;
 
-import android.content.ContentValues;
 import android.net.Uri;
 import android.text.TextUtils;
 
@@ -26,6 +24,7 @@ public class CreateQuestPresenter extends MvpPresenter<CreateQuestView> {
 
     public void CreateEmptyQuest() {
         mQuest = new Quest();
+        saveQuest();
         getViewState().showQuestRecyclerView(mQuest);
     }
 
@@ -34,7 +33,8 @@ public class CreateQuestPresenter extends MvpPresenter<CreateQuestView> {
         // Check if this is supposed to be a new quest
         // and check if all the fields in the editor are blank
         if (mCurrentQuestUri == null &&
-                TextUtils.isEmpty(mQuest.mName) && TextUtils.isEmpty(mQuest.mDescription)) {
+                TextUtils.isEmpty(mQuest.mName) && TextUtils.isEmpty(mQuest.mDescription)
+                && TextUtils.isEmpty(mQuest.getQuestJsonArrayString())) {
             // Since no fields were modified, we can return early without creating a new quest.
             // No need to create ContentValues and no need to do any ContentProvider operations.
             return;
@@ -42,7 +42,6 @@ public class CreateQuestPresenter extends MvpPresenter<CreateQuestView> {
 
         // Create a ContentValues object where column names are the keys,
         // and quest attributes from the editor are the values.
-
 
         getViewState().onSaveQuest(mQuest, mCurrentQuestUri);
     }

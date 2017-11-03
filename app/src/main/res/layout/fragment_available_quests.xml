@@ -2,33 +2,42 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".mainscreen.MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".mainscreen.MainActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="54dp"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        android:elevation="6dp"
+        >
+
         <Spinner
             android:id="@+id/available_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="start|center"
             android:layout_marginEnd="48dp"
-            android:entries="@array/available_spinner"/>
+            android:layout_marginStart="16dp"
+            android:entries="@array/available_spinner"
+            android:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark" />
 
         <ImageButton
             android:id="@+id/refresh_button"
             android:layout_width="wrap_content"
+            android:layout_marginEnd="16dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
+            android:layout_gravity="end|center"
+            android:background="@color/colorPrimary"
             android:src="@drawable/ic_refresh_black_24dp" />
     </FrameLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/available_quests_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
 
 </LinearLayout>
 

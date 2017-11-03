@@ -18,10 +18,9 @@ public class FileUtils {
     }
 
     @NonNull
-    public static File createJpgFile(@NonNull final Context context, @NonNull final String author,
-            @NonNull final String name, @NonNull final int step) throws IOException {
+    public static File createJpgFile(@NonNull final Context context, @NonNull final int globalId, @NonNull final int step) throws IOException {
 
-        String imageFileName = "JPEG_" + author + "_" + name + "_" + step + "_";
+        String imageFileName = "JPEG_" + globalId + "_" + step + "_";
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */

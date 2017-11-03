@@ -23,6 +23,7 @@
             android:id="@+id/item_play_check_text_answer_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@android:style/Widget.Material.Button.Colored"
             android:text="@string/check"/>
 
     </LinearLayout>

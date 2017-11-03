@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 import static com.kirich74.questsapp.data.ItemType.IMAGE;
 import static com.kirich74.questsapp.data.ItemType.IMAGE_;
+import static com.kirich74.questsapp.data.ItemType.NEXT_STEP;
+import static com.kirich74.questsapp.data.ItemType.NEXT_STEP_;
 import static com.kirich74.questsapp.data.ItemType.TEXT;
 import static com.kirich74.questsapp.data.ItemType.TEXT_;
 import static com.kirich74.questsapp.data.ItemType.TEXT_ANSWER;
@@ -134,6 +136,17 @@ public class Quest {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void addNextItem() {
+        JSONObject object = new JSONObject();
+        try {
+            object.put(TYPE, NEXT_STEP);
+            object.put(NEXT_STEP_, "");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        quest.add(object);
     }
 
     public Uri getImageUri(int position) {

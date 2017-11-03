@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">QuestsApp</string>
+    <string name="app_name">Quests in reality</string>
     <string name="recent">recent</string>
     <string name="played">played</string>
     <string name="created">created</string>
@@ -14,6 +14,12 @@
     <string name="enter_quest_description">Enter quest description</string>
     <string name="download">Download</string>
     <string name="quest_creating">Quest creating</string>
+    <string name="add_step_description">ADD STEP DESCRIPTION</string>
+    <string name="image">IMAGE</string>
+    <string name="text">TEXT</string>
+    <string name="add_step_confirmation">ADD STEP CONFIRMATION</string>
+    <string name="none">NONE</string>
+    <string name="next_step">NEXT STEP</string>
 
     <string-array name="available_spinner">
         <item>Available for all</item>

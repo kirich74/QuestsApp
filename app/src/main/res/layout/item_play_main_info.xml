@@ -37,6 +37,7 @@
             android:id="@+id/start_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@android:style/Widget.Material.Button.Colored"
             android:text="@string/start" />
 
     </LinearLayout>

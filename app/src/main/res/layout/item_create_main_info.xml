@@ -21,6 +21,7 @@
             android:id="@+id/choose_photo_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@android:style/Widget.Material.Button.Colored"
             android:text="@string/choose_photo" />
 
         <EditText
