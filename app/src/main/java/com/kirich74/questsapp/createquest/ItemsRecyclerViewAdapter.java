@@ -407,7 +407,7 @@ public class ItemsRecyclerViewAdapter
                 public void onClick(final View v) {
                     final String imagePath = mQuest.getImageUri(getAdapterPosition()).toString();
                     if(!imagePath.isEmpty())
-                        FileUtils.deleteFile(mContext, imagePath);
+                        FileUtils.deleteFile(imagePath);
                     selectedStep = getAdapterPosition();
                     mOnItemActionListener.setImage();
                 }
@@ -427,7 +427,7 @@ public class ItemsRecyclerViewAdapter
                 @Override
                 public void onClick(final View v) {
                     mQuest.deleteItem(item);
-                    FileUtils.deleteFile(mContext, imagePath);
+                    FileUtils.deleteFile(imagePath);
                     notifyItemRemoved(getAdapterPosition());
                 }
             });

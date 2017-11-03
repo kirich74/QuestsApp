@@ -13,7 +13,7 @@ public class QuestDbHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "localQuests.db";
 
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     public QuestDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -24,7 +24,7 @@ public class QuestDbHelper extends SQLiteOpenHelper {
         String SQL_CREATE_QUESTS_TABLE =  "CREATE TABLE " + QuestEntry.TABLE_NAME + " ("
                 + QuestEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + QuestEntry.COLUMN_QUEST_GLOBAL_ID + " INTEGER, "
-                + QuestEntry.COLUMN_QUEST_NAME + " TEXT NOT NULL, "
+                + QuestEntry.COLUMN_QUEST_NAME + " TEXT, "
                 + QuestEntry.COLUMN_QUEST_AUTHOR + " TEXT NOT NULL, "
                 + QuestEntry.COLUMN_QUEST_IMAGE + " TEXT, "
                 + QuestEntry.COLUMN_QUEST_DATA_JSON + " TEXT, "

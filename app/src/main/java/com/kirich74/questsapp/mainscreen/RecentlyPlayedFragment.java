@@ -2,6 +2,7 @@ package com.kirich74.questsapp.mainscreen;
 
 import com.kirich74.questsapp.R;
 import com.kirich74.questsapp.createquest.CreateQuestActivity;
+import com.kirich74.questsapp.data.FileUtils;
 import com.kirich74.questsapp.data.QuestContract;
 import com.kirich74.questsapp.playquest.PlayQuestActivity;
 
@@ -83,7 +84,7 @@ public class RecentlyPlayedFragment extends android.support.v4.app.Fragment
     }
 
     @Override
-    public void deleteQuest(final int id) {
+    public void deleteQuest(final int id, final int globalId) {
 
         Uri currentQuestUri = ContentUris.withAppendedId(QuestContract.QuestEntry.CONTENT_URI, id);
         if (currentQuestUri != null) {
@@ -98,7 +99,7 @@ public class RecentlyPlayedFragment extends android.support.v4.app.Fragment
 
             } else {
                 // Otherwise, the delete was successful and we can display a toast.
-
+                FileUtils.deleteDirectory(getContext(),globalId);
             }
         }
 
@@ -112,7 +113,8 @@ public class RecentlyPlayedFragment extends android.support.v4.app.Fragment
                 QuestContract.QuestEntry.COLUMN_QUEST_NAME,
                 QuestContract.QuestEntry.COLUMN_QUEST_AUTHOR,
                 QuestContract.QuestEntry.COLUMN_QUEST_IMAGE,
-                QuestContract.QuestEntry.COLUMN_QUEST_DESCRIPTION};
+                QuestContract.QuestEntry.COLUMN_QUEST_DESCRIPTION,
+                QuestContract.QuestEntry.COLUMN_QUEST_GLOBAL_ID};
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new android.support.v4.content.CursorLoader(getContext(),

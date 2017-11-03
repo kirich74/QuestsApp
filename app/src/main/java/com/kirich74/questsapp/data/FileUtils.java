@@ -33,7 +33,7 @@ public class FileUtils {
         return image;
     }
 
-    public static void deleteFile(@NonNull final Context context, @NonNull String path) {
+    public static void deleteFile(@NonNull String path) {
         path = path.substring(5);
         File fdelete = new File(path);
         if (fdelete.exists()) {
@@ -41,6 +41,22 @@ public class FileUtils {
                 System.out.println("file Deleted :" + path);
             } else {
                 System.out.println("file not Deleted :" + path);
+            }
+        }
+    }
+
+    public static void deleteDirectory(@NonNull final Context context, @NonNull final int globalId) {
+        File storageDir = context
+                .getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/" + globalId);
+        if (storageDir != null && storageDir.exists()) {
+            File[] images  = storageDir.listFiles();
+            for (File image : images){
+                image.delete();
+            }
+            if (storageDir.delete()) {
+                System.out.println("file Deleted :" + storageDir);
+            } else {
+                System.out.println("file not Deleted :" + storageDir);
             }
         }
     }

@@ -87,6 +87,7 @@ public class CreateQuestActivity extends MvpActivity
             // This is a NEW quest, so insert a new quest into the provider,
             // returning the content URI for the new quest.
             newUri = getContentResolver().insert(QuestEntry.CONTENT_URI, values);
+            mCreateQuestPresenter.setCurrentQuestUri(newUri);
 
             // Show a toast message depending on whether or not the insertion was successful.
             if (newUri == null) {

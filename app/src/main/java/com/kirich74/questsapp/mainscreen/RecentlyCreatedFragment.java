@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.kirich74.questsapp.data.FileUtils;
 import com.kirich74.questsapp.data.QuestContract.QuestEntry;
 
 
@@ -98,7 +99,7 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
     }
 
     @Override
-    public void deleteQuest(final int id) {
+    public void deleteQuest(final int id, final int globalId) {
 
         Uri currentQuestUri = ContentUris.withAppendedId(QuestEntry.CONTENT_URI, id);
         if (currentQuestUri != null) {
@@ -113,7 +114,7 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
 
             } else {
                 // Otherwise, the delete was successful and we can display a toast.
-
+                FileUtils.deleteDirectory(getContext(),globalId);
             }
         }
 
@@ -133,7 +134,8 @@ public class RecentlyCreatedFragment extends android.support.v4.app.Fragment
                 QuestEntry.COLUMN_QUEST_NAME,
                 QuestEntry.COLUMN_QUEST_AUTHOR,
                 QuestEntry.COLUMN_QUEST_IMAGE,
-                QuestEntry.COLUMN_QUEST_DESCRIPTION};
+                QuestEntry.COLUMN_QUEST_DESCRIPTION,
+                QuestEntry.COLUMN_QUEST_GLOBAL_ID};
         PrefManager prefManager = new PrefManager(getActivity());
 
         // This loader will execute the ContentProvider's query method on a background thread

@@ -15,6 +15,10 @@ public class CreateQuestPresenter extends MvpPresenter<CreateQuestView> {
 
     private Uri mCurrentQuestUri;
 
+    public void setCurrentQuestUri(final Uri currentQuestUri) {
+        mCurrentQuestUri = currentQuestUri;
+    }
+
     public void setQuest(Uri questUri, String name, String description, String image,
             String dataJson, int access, int globalId) {
         mQuest = new Quest(name, description, image, access, dataJson, globalId);

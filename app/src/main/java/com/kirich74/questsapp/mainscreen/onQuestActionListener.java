@@ -9,5 +9,5 @@ public interface onQuestActionListener {
 
     String getButtonTitle ();
 
-    void deleteQuest (int id);
+    void deleteQuest (int id, int globalId);
 }
