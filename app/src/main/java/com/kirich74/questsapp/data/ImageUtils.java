@@ -30,7 +30,7 @@ public class ImageUtils {
         try {
             file = FileUtils.createJpgFile(context, globalId, step);
             stream = new BufferedOutputStream(new FileOutputStream(file));
-            image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            image.compress(Bitmap.CompressFormat.JPEG, 50, stream);
             return Uri.parse(file.toURI().toString());
         } catch (IOException e) {
             Log.e(TAG, "saveBitmapToFile: file not created", e);
@@ -39,5 +39,7 @@ public class ImageUtils {
             StreamUtils.close(stream);
         }
     }
+
+
 
 }

@@ -2,6 +2,7 @@ package com.kirich74.questsapp.createquest;
 
 import com.kirich74.questsapp.FirstLaunch.PrefManager;
 import com.kirich74.questsapp.R;
+import com.kirich74.questsapp.data.FileUtils;
 import com.kirich74.questsapp.data.ImageUtils;
 import com.kirich74.questsapp.data.Quest;
 import com.squareup.picasso.Picasso;
@@ -404,6 +405,9 @@ public class ItemsRecyclerViewAdapter
             mSetImageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
+                    final String imagePath = mQuest.getImageUri(getAdapterPosition()).toString();
+                    if(!imagePath.isEmpty())
+                        FileUtils.deleteFile(mContext, imagePath);
                     selectedStep = getAdapterPosition();
                     mOnItemActionListener.setImage();
                 }
@@ -412,7 +416,7 @@ public class ItemsRecyclerViewAdapter
                 mSetImageButton.requestFocus();
             }
 
-            String imagePath = mQuest.getImageUri(getAdapterPosition()).toString();
+            final String imagePath = mQuest.getImageUri(getAdapterPosition()).toString();
 
             if (!imagePath.isEmpty()) {
                 Picasso.with(mContext)
@@ -423,6 +427,7 @@ public class ItemsRecyclerViewAdapter
                 @Override
                 public void onClick(final View v) {
                     mQuest.deleteItem(item);
+                    FileUtils.deleteFile(mContext, imagePath);
                     notifyItemRemoved(getAdapterPosition());
                 }
             });

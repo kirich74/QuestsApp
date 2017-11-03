@@ -18,10 +18,12 @@ public class FileUtils {
     }
 
     @NonNull
-    public static File createJpgFile(@NonNull final Context context, @NonNull final int globalId, @NonNull final int step) throws IOException {
+    public static File createJpgFile(@NonNull final Context context, @NonNull final int globalId,
+            @NonNull final int step) throws IOException {
 
         String imageFileName = "JPEG_" + globalId + "_" + step + "_";
-        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = context
+                .getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/" + globalId);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
@@ -29,6 +31,18 @@ public class FileUtils {
         );
 
         return image;
+    }
+
+    public static void deleteFile(@NonNull final Context context, @NonNull String path) {
+        path = path.substring(5);
+        File fdelete = new File(path);
+        if (fdelete.exists()) {
+            if (fdelete.delete()) {
+                System.out.println("file Deleted :" + path);
+            } else {
+                System.out.println("file not Deleted :" + path);
+            }
+        }
     }
 
 }
