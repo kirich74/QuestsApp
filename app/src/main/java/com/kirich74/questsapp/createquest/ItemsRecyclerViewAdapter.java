@@ -215,8 +215,14 @@ public class ItemsRecyclerViewAdapter
             mAddImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    mQuest.addImageItem();
-                    notifyItemInserted(getAdapterPosition());
+                    if (mQuest.getGlobalId() == 0){
+                        mOnItemActionListener.makeConnectionErrorToast();
+                    }else {
+                        selectedStep = getAdapterPosition();
+                        mOnItemActionListener.setImage();
+                        mQuest.addImageItem();
+                        notifyItemInserted(getAdapterPosition());
+                    }
                 }
             });
             mAddNext.setOnClickListener(new View.OnClickListener() {
@@ -262,8 +268,16 @@ public class ItemsRecyclerViewAdapter
             mChoosePhotoButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    selectedStep = getAdapterPosition();
-                    mOnItemActionListener.setImage();
+                    if (mQuest.getGlobalId() == 0){
+                        mOnItemActionListener.makeConnectionErrorToast();
+                    }else {
+                        final String imagePath = mQuest.getMainImageUri()
+                                .toString();
+                        if (!imagePath.isEmpty())
+                            FileUtils.deleteFile(mContext, imagePath);
+                        selectedStep = getAdapterPosition();
+                        mOnItemActionListener.setImage();
+                    }
                 }
             });
 
@@ -392,28 +406,15 @@ public class ItemsRecyclerViewAdapter
 
         private ImageView mImageView;
 
-        private Button mSetImageButton;
-
         ImageViewHolder(final View itemView) {
             super(itemView);
             mImageView = (ImageView) itemView.findViewById(R.id.item_create_image);
-            mSetImageButton = (Button) itemView.findViewById(R.id.item_create_choose_photo_button);
             mCancelButton = (ImageButton) itemView.findViewById(R.id.cancel_action);
         }
 
         public void bind(@NonNull final JSONObject item) {
-            mSetImageButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    final String imagePath = mQuest.getImageUri(getAdapterPosition()).toString();
-                    if(!imagePath.isEmpty())
-                        FileUtils.deleteFile(imagePath);
-                    selectedStep = getAdapterPosition();
-                    mOnItemActionListener.setImage();
-                }
-            });
             if (getAdapterPosition() == getItemCount() - 2){
-                mSetImageButton.requestFocus();
+                mImageView.requestFocus();
             }
 
             final String imagePath = mQuest.getImageUri(getAdapterPosition()).toString();
@@ -427,7 +428,7 @@ public class ItemsRecyclerViewAdapter
                 @Override
                 public void onClick(final View v) {
                     mQuest.deleteItem(item);
-                    FileUtils.deleteFile(imagePath);
+                    FileUtils.deleteFile(mContext, imagePath);
                     notifyItemRemoved(getAdapterPosition());
                 }
             });

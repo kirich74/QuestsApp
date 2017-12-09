@@ -167,7 +167,7 @@ public class CreateQuestActivity extends MvpActivity
                                 @Override
                                 public void onFailure(final Call<DeleteUpdate> call,
                                         final Throwable t) {
-                                    Toast.makeText(getApplication(), "Can't save on server",
+                                    Toast.makeText(getApplication(), "Can't save on server (probably you use empty name)",
                                             Toast.LENGTH_SHORT).show();
                                     finish();
                                 }
@@ -242,6 +242,11 @@ public class CreateQuestActivity extends MvpActivity
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, GALLERY_REQUEST);
+    }
+
+    @Override
+    public void makeConnectionErrorToast() {
+        Toast.makeText(getApplicationContext(), "To set image you must save your quest to server", Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -10,4 +10,6 @@ public interface onItemActionListener {
 
     void setImage ();
 
+    void makeConnectionErrorToast();
+
 }

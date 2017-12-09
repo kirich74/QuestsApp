@@ -1,5 +1,7 @@
 package com.kirich74.questsapp.data;
 
+import com.squareup.picasso.Picasso;
+
 import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -33,7 +35,8 @@ public class FileUtils {
         return image;
     }
 
-    public static void deleteFile(@NonNull String path) {
+    public static void deleteFile(Context context, @NonNull String path) {
+        Picasso.with(context).invalidate(path);
         path = path.substring(5);
         File fdelete = new File(path);
         if (fdelete.exists()) {
@@ -51,7 +54,8 @@ public class FileUtils {
         if (storageDir != null && storageDir.exists()) {
             File[] images  = storageDir.listFiles();
             for (File image : images){
-                image.delete();
+                String imagePath = "file:" + image.getAbsolutePath();
+                FileUtils.deleteFile(context, imagePath);
             }
             if (storageDir.delete()) {
                 System.out.println("file Deleted :" + storageDir);
