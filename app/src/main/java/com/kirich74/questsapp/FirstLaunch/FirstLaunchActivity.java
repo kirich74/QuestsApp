@@ -35,6 +35,8 @@ public class FirstLaunchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         prefManager = new PrefManager(this);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_first_launch);
         if (!prefManager.isFirstTimeLaunch()) {
             if (!Objects.equals(prefManager.getSavedEmail(), NO_SAVED_EMAIL)) {
                 launchHomeScreen();
@@ -43,15 +45,13 @@ public class FirstLaunchActivity extends AppCompatActivity {
                 launchSignInActivity();
             }
             finish();
+        } else {
+            prefManager.setFirstTimeLaunch(false);
+            // Get the ViewPager and set it's PagerAdapter so that it can display items
+            viewPager = (ViewPager) findViewById(R.id.first_launch_view_pager);
+            viewPager.setAdapter(new ChooseFragmentAdapter(getSupportFragmentManager(),
+                    FirstLaunchActivity.this));
         }
-        prefManager.setFirstTimeLaunch(false);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_first_launch);
-
-        // Get the ViewPager and set it's PagerAdapter so that it can display items
-        viewPager = (ViewPager) findViewById(R.id.first_launch_view_pager);
-        viewPager.setAdapter(new ChooseFragmentAdapter(getSupportFragmentManager(),
-                FirstLaunchActivity.this));
     }
 
     private void launchHomeScreen() {

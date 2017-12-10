@@ -6,12 +6,19 @@ import com.kirich74.questsapp.cloudclient.CloudClient;
 import com.kirich74.questsapp.cloudclient.ICloudClient;
 import com.kirich74.questsapp.cloudclient.models.AvailableQuest;
 import com.kirich74.questsapp.cloudclient.models.DeleteUpdate;
+import com.kirich74.questsapp.data.Quest;
 import com.kirich74.questsapp.data.QuestContract;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -23,9 +30,10 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -202,6 +210,42 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
         }
     }
 
+    public void download(@NonNull final String fileName, final int globalId){
+        Target target = new Target() {
+
+            @Override
+            public void onPrepareLoad(Drawable arg0) {
+                return;
+            }
+
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom arg1) {
+
+                try {
+                    File storageDir = getContext()
+                            .getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/" + globalId);
+                    File file = new File(storageDir, fileName);
+                    FileOutputStream ostream = new FileOutputStream(file);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, ostream);
+                    ostream.close();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable arg0) {
+                return;
+            }
+        };
+
+        Picasso.with(getContext())
+                .load("http://kirich74.h1n.ru/quests_api/upload" + fileName)
+                .into(target);
+    }
+
+
     @Override
     public void download(final int position) {
         AvailableQuest mQuest = mQuestsAdapter.getAvailableQuests().get(position);
@@ -213,7 +257,6 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
         values.put(QuestContract.QuestEntry.COLUMN_QUEST_DATA_JSON, mQuest.getDataJson());
         values.put(QuestContract.QuestEntry.COLUMN_QUEST_IMAGE, mQuest.getImageUri());
         values.put(QuestContract.QuestEntry.COLUMN_QUEST_GLOBAL_ID, mQuest.getId());
-
         String[] projection = {
                 QuestContract.QuestEntry._ID};
 
@@ -246,7 +289,12 @@ public class AvailableQuestsFragment extends android.support.v4.app.Fragment
             Toast.makeText(getActivity(), "Quest updated", Toast.LENGTH_SHORT).show();
         }
 
-
+        download(mQuest.getImageUri().substring(mQuest.getImageUri().lastIndexOf("/")), mQuest.getId());
+        Quest downloadedQuest = new Quest("", "", "", 0, mQuest.getDataJson(), 0);
+        for (int i = 1; i <= downloadedQuest.quest.size(); i++) {
+            if (downloadedQuest.getImageUri(i) != null)
+                download(downloadedQuest.getImageUri(i).toString().substring(mQuest.getImageUri().lastIndexOf("/")),mQuest.getId());
+        }
     }
 
     @Override
