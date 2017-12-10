@@ -3,6 +3,7 @@ package com.kirich74.questsapp.cloudclient;
 import com.kirich74.questsapp.cloudclient.models.AvailableQuest;
 import com.kirich74.questsapp.cloudclient.models.DeleteUpdate;
 import com.kirich74.questsapp.cloudclient.models.Insert;
+import com.kirich74.questsapp.cloudclient.models.Result;
 import com.kirich74.questsapp.cloudclient.models.Send;
 
 import java.util.List;
@@ -56,7 +57,7 @@ public interface ICloudClient {
             @Query("description") String description, @Query("image_uri") String image_uri,
             @Query("data_json") String data_json, @Query("public") int access);
 
-    /*@Multipart
-    @POST("upload.php")
-    Call<Result> uploadImage(@Part MultipartBody.Part file);*/
+    @Multipart
+    @POST("quests_api/upload/upload.php")
+    Call<Result> uploadImage(@Part MultipartBody.Part file);
 }

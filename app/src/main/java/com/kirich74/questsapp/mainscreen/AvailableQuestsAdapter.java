@@ -113,7 +113,9 @@ public class AvailableQuestsAdapter
             name.setText(quest.getName());
             String imagePath = quest.getImageUri();
             if (!imagePath.isEmpty()) {
-                Picasso.with(mContext).load(imagePath).resize(viewWidth, viewWidth).centerCrop()
+                String s = imagePath.substring(imagePath.lastIndexOf("/"));
+
+                Picasso.with(mContext).load("http://kirich74.h1n.ru/quests_api/upload" + s).resize(viewWidth, viewWidth).centerCrop()
                         .into(imageDescription);
             }
             description.setText(quest.getDescription());

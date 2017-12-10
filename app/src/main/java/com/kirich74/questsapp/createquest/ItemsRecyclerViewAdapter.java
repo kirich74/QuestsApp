@@ -169,7 +169,11 @@ public class ItemsRecyclerViewAdapter
         notifyItemRemoved(position);
     }
 
-    public void saveImage(Bitmap bitmap) {
+    public int getGlobalId(){
+        return mQuest.getGlobalId();
+    }
+
+    String saveImage(Bitmap bitmap) {
         PrefManager prefManager = new PrefManager(mContext);
         Uri mUri = ImageUtils
                 .saveBitmapToFile(mContext, bitmap, mQuest.getGlobalId(), selectedStep);
@@ -179,6 +183,7 @@ public class ItemsRecyclerViewAdapter
             mQuest.editImageItem(selectedStep, mUri != null ? mUri.toString() : null);
         }
         notifyDataSetChanged();
+        return mUri.toString();
     }
 
     public void setGlobalId(final int globalId) {
@@ -222,6 +227,8 @@ public class ItemsRecyclerViewAdapter
                         mOnItemActionListener.setImage();
                         mQuest.addImageItem();
                         notifyItemInserted(getAdapterPosition());
+                        final String imagePath = mQuest.getMainImageUri()
+                                .toString();
                     }
                 }
             });
@@ -271,12 +278,14 @@ public class ItemsRecyclerViewAdapter
                     if (mQuest.getGlobalId() == 0){
                         mOnItemActionListener.makeConnectionErrorToast();
                     }else {
-                        final String imagePath = mQuest.getMainImageUri()
+                        final String oldImagePath = mQuest.getMainImageUri()
                                 .toString();
-                        if (!imagePath.isEmpty())
-                            FileUtils.deleteFile(mContext, imagePath);
+                        if (!oldImagePath.isEmpty())
+                            FileUtils.deleteFile(mContext, oldImagePath);
                         selectedStep = getAdapterPosition();
                         mOnItemActionListener.setImage();
+                        final String imagePath = mQuest.getMainImageUri()
+                                .toString();
                     }
                 }
             });

@@ -23,7 +23,7 @@ public class FileUtils {
     public static File createJpgFile(@NonNull final Context context, @NonNull final int globalId,
             @NonNull final int step) throws IOException {
 
-        String imageFileName = "JPEG_" + globalId + "_" + step + "_";
+        String imageFileName = globalId + "_JPEG_" + "_" + step + "_";
         File storageDir = context
                 .getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/" + globalId);
         File image = File.createTempFile(
