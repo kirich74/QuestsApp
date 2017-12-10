@@ -1,5 +1,7 @@
 package com.kirich74.questsapp.data;
 
+import com.squareup.picasso.Picasso;
+
 import android.content.Context;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -18,10 +20,12 @@ public class FileUtils {
     }
 
     @NonNull
-    public static File createJpgFile(@NonNull final Context context, @NonNull final int globalId, @NonNull final int step) throws IOException {
+    public static File createJpgFile(@NonNull final Context context, @NonNull final int globalId,
+            @NonNull final int step) throws IOException {
 
-        String imageFileName = "JPEG_" + globalId + "_" + step + "_";
-        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        String imageFileName = globalId + "_JPEG_" + "_" + step + "_";
+        File storageDir = context
+                .getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/" + globalId);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
@@ -29,6 +33,36 @@ public class FileUtils {
         );
 
         return image;
+    }
+
+    public static void deleteFile(Context context, @NonNull String path) {
+        Picasso.with(context).invalidate(path);
+        path = path.substring(5);
+        File fdelete = new File(path);
+        if (fdelete.exists()) {
+            if (fdelete.delete()) {
+                System.out.println("file Deleted :" + path);
+            } else {
+                System.out.println("file not Deleted :" + path);
+            }
+        }
+    }
+
+    public static void deleteDirectory(@NonNull final Context context, @NonNull final int globalId) {
+        File storageDir = context
+                .getExternalFilesDir(Environment.DIRECTORY_PICTURES + "/" + globalId);
+        if (storageDir != null && storageDir.exists()) {
+            File[] images  = storageDir.listFiles();
+            for (File image : images){
+                String imagePath = "file:" + image.getAbsolutePath();
+                FileUtils.deleteFile(context, imagePath);
+            }
+            if (storageDir.delete()) {
+                System.out.println("file Deleted :" + storageDir);
+            } else {
+                System.out.println("file not Deleted :" + storageDir);
+            }
+        }
     }
 
 }

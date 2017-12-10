@@ -8,9 +8,12 @@ import com.kirich74.questsapp.cloudclient.CloudClient;
 import com.kirich74.questsapp.cloudclient.ICloudClient;
 import com.kirich74.questsapp.cloudclient.models.DeleteUpdate;
 import com.kirich74.questsapp.cloudclient.models.Insert;
+import com.kirich74.questsapp.cloudclient.models.Result;
 import com.kirich74.questsapp.data.Quest;
 import com.kirich74.questsapp.data.QuestContract.QuestEntry;
+import com.squareup.picasso.Picasso;
 
+import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -21,6 +24,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,9 +33,13 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -87,6 +95,7 @@ public class CreateQuestActivity extends MvpActivity
             // This is a NEW quest, so insert a new quest into the provider,
             // returning the content URI for the new quest.
             newUri = getContentResolver().insert(QuestEntry.CONTENT_URI, values);
+            mCreateQuestPresenter.setCurrentQuestUri(newUri);
 
             // Show a toast message depending on whether or not the insertion was successful.
             if (newUri == null) {
@@ -166,7 +175,7 @@ public class CreateQuestActivity extends MvpActivity
                                 @Override
                                 public void onFailure(final Call<DeleteUpdate> call,
                                         final Throwable t) {
-                                    Toast.makeText(getApplication(), "Can't save on server",
+                                    Toast.makeText(getApplication(), "Can't save on server (probably you use empty name)",
                                             Toast.LENGTH_SHORT).show();
                                     finish();
                                 }
@@ -244,6 +253,70 @@ public class CreateQuestActivity extends MvpActivity
     }
 
     @Override
+    public void makeConnectionErrorToast() {
+        Toast.makeText(getApplicationContext(), "To set image you must save your quest to server", Toast.LENGTH_SHORT).show();
+    }
+
+
+    public void uploadImage(String filePath) {
+        /**
+         * Progressbar to Display if you need
+         */
+        final ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(CreateQuestActivity.this);
+        progressDialog.setMessage(getString(R.string.string_title_upload_progressbar_));
+        progressDialog.show();
+
+        //Create Upload Server Client
+        mICloudClient = CloudClient.getApi();
+
+        //File creating from selected URL
+        filePath = filePath.substring(5);
+        File file = new File(filePath);
+
+        // create RequestBody instance from file
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        String s1 = file.getName();
+        s1 = "/" + mAdapter.getGlobalId() + "/" + s1;
+        // MultipartBody.Part is used to send also the actual file name
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("uploaded_file", s1, requestFile);
+
+        Call<Result> resultCall = mICloudClient.uploadImage(body);
+
+        // finally, execute the request
+        resultCall.enqueue(new Callback<Result>() {
+            @Override
+            public void onResponse(Call<Result> call, Response<Result> response) {
+
+                progressDialog.dismiss();
+
+                // Response Success or Fail
+                if (response.isSuccessful()) {
+                    if (response.body().getResult().equals("success"))
+                        Toast.makeText(getApplicationContext(), R.string.string_upload_success, Toast.LENGTH_LONG).show();
+                    else
+                        Toast.makeText(getApplicationContext(), R.string.string_upload_fail, Toast.LENGTH_LONG).show();
+
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.string_upload_fail, Toast.LENGTH_LONG).show();
+                }
+
+                /**
+                 * Update Views
+                 */
+            }
+
+            @Override
+            public void onFailure(Call<Result> call, Throwable t) {
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
 
@@ -259,7 +332,7 @@ public class CreateQuestActivity extends MvpActivity
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    mAdapter.saveImage(bitmap);
+                    uploadImage(mAdapter.saveImage(bitmap));
                 }
         }
     }

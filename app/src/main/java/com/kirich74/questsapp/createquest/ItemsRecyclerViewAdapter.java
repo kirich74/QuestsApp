@@ -2,6 +2,7 @@ package com.kirich74.questsapp.createquest;
 
 import com.kirich74.questsapp.FirstLaunch.PrefManager;
 import com.kirich74.questsapp.R;
+import com.kirich74.questsapp.data.FileUtils;
 import com.kirich74.questsapp.data.ImageUtils;
 import com.kirich74.questsapp.data.Quest;
 import com.squareup.picasso.Picasso;
@@ -168,7 +169,11 @@ public class ItemsRecyclerViewAdapter
         notifyItemRemoved(position);
     }
 
-    public void saveImage(Bitmap bitmap) {
+    public int getGlobalId(){
+        return mQuest.getGlobalId();
+    }
+
+    String saveImage(Bitmap bitmap) {
         PrefManager prefManager = new PrefManager(mContext);
         Uri mUri = ImageUtils
                 .saveBitmapToFile(mContext, bitmap, mQuest.getGlobalId(), selectedStep);
@@ -178,6 +183,7 @@ public class ItemsRecyclerViewAdapter
             mQuest.editImageItem(selectedStep, mUri != null ? mUri.toString() : null);
         }
         notifyDataSetChanged();
+        return mUri.toString();
     }
 
     public void setGlobalId(final int globalId) {
@@ -214,8 +220,16 @@ public class ItemsRecyclerViewAdapter
             mAddImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    mQuest.addImageItem();
-                    notifyItemInserted(getAdapterPosition());
+                    if (mQuest.getGlobalId() == 0){
+                        mOnItemActionListener.makeConnectionErrorToast();
+                    }else {
+                        selectedStep = getAdapterPosition();
+                        mOnItemActionListener.setImage();
+                        mQuest.addImageItem();
+                        notifyItemInserted(getAdapterPosition());
+                        final String imagePath = mQuest.getMainImageUri()
+                                .toString();
+                    }
                 }
             });
             mAddNext.setOnClickListener(new View.OnClickListener() {
@@ -261,8 +275,18 @@ public class ItemsRecyclerViewAdapter
             mChoosePhotoButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    selectedStep = getAdapterPosition();
-                    mOnItemActionListener.setImage();
+                    if (mQuest.getGlobalId() == 0){
+                        mOnItemActionListener.makeConnectionErrorToast();
+                    }else {
+                        final String oldImagePath = mQuest.getMainImageUri()
+                                .toString();
+                        if (!oldImagePath.isEmpty())
+                            FileUtils.deleteFile(mContext, oldImagePath);
+                        selectedStep = getAdapterPosition();
+                        mOnItemActionListener.setImage();
+                        final String imagePath = mQuest.getMainImageUri()
+                                .toString();
+                    }
                 }
             });
 
@@ -391,28 +415,18 @@ public class ItemsRecyclerViewAdapter
 
         private ImageView mImageView;
 
-        private Button mSetImageButton;
-
         ImageViewHolder(final View itemView) {
             super(itemView);
             mImageView = (ImageView) itemView.findViewById(R.id.item_create_image);
-            mSetImageButton = (Button) itemView.findViewById(R.id.item_create_choose_photo_button);
             mCancelButton = (ImageButton) itemView.findViewById(R.id.cancel_action);
         }
 
         public void bind(@NonNull final JSONObject item) {
-            mSetImageButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View v) {
-                    selectedStep = getAdapterPosition();
-                    mOnItemActionListener.setImage();
-                }
-            });
             if (getAdapterPosition() == getItemCount() - 2){
-                mSetImageButton.requestFocus();
+                mImageView.requestFocus();
             }
 
-            String imagePath = mQuest.getImageUri(getAdapterPosition()).toString();
+            final String imagePath = mQuest.getImageUri(getAdapterPosition()).toString();
 
             if (!imagePath.isEmpty()) {
                 Picasso.with(mContext)
@@ -423,6 +437,7 @@ public class ItemsRecyclerViewAdapter
                 @Override
                 public void onClick(final View v) {
                     mQuest.deleteItem(item);
+                    FileUtils.deleteFile(mContext, imagePath);
                     notifyItemRemoved(getAdapterPosition());
                 }
             });

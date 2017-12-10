@@ -78,6 +78,8 @@ public class QuestsRecyclerViewAdapter
 
         private ImageButton deleteButton;
 
+        private int globalId;
+
         public ViewHolder(final View itemView) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.quest_title_text_view);
@@ -90,6 +92,7 @@ public class QuestsRecyclerViewAdapter
 
         public void bindCursor(final Cursor cursor) {
             id = mCursor.getInt(mCursor.getColumnIndexOrThrow(QuestContract.QuestEntry._ID));
+            globalId = mCursor.getInt(mCursor.getColumnIndexOrThrow(QuestContract.QuestEntry.COLUMN_QUEST_GLOBAL_ID));
             name.setText(cursor.getString(
                     cursor.getColumnIndexOrThrow(QuestContract.QuestEntry.COLUMN_QUEST_NAME)));
             String imagePath = cursor.getString(
@@ -113,7 +116,7 @@ public class QuestsRecyclerViewAdapter
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    mOnQuestActionListener.deleteQuest(id);
+                    mOnQuestActionListener.deleteQuest(id, globalId);
                 }
             });
         }

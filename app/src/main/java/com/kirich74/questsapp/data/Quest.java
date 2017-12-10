@@ -171,6 +171,10 @@ public class Quest {
         return new JSONArray(quest).toString();
     }
 
+    public String getMainImageUri() {
+        return mMainImageUri;
+    }
+
     private int realPosition(int position) {
         return position - 1;
     }
